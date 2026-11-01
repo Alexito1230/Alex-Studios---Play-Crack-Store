@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Crack Store</title>
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --dark: #0a0a0c;
+            --card-bg: rgba(20, 20, 25, 0.7);
+            --text: #ffffff;
+            --text-muted: #8a8a93;
+            --error: #ff4a5a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fondo Animado de Estrellas Espaciales */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: transparent url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=1000&auto=format&fit=crop') repeat;
+            opacity: 0.15;
+            animation: moveStars 120s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
+        }
+
+        .store-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-sizing: border-box;
+            margin-top: 70px;
+            margin-bottom: 30px;
+        }
+
+        /* Navbar Fijo Superior */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 20px;
+            z-index: 100;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 55%;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px 8px 32px;
+            background: #181820;
+            border: 1px solid #2d2d38;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        .cart-icon-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            position: relative;
+            padding: 5px;
+            width: auto;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        h1, h2, h3, h4 {
+            margin-top: 0;
+            font-weight: 700;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .slogan {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        /* Pantallas */
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Badges de Categoría */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .badge-console { background: rgba(0, 255, 204, 0.15); color: var(--primary); border: 1px solid var(--primary); }
+        .badge-game { background: rgba(155, 89, 182, 0.15); color: #bb86fc; border: 1px solid #bb86fc; }
+        .badge-port { background: rgba(230, 126, 34, 0.15); color: #ffaa44; border: 1px solid #ffaa44; }
+
+        /* Tarjetas de Producto */
+        .product-card {
+            background: rgba(28, 28, 36, 0.85);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #2d2d38;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 204, 0.1);
+        }
+
+        .product-img {
+            width: 100%;
+            height: auto;
+            max-height: 280px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #121216;
+            margin-bottom: 14px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .price {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 8px 0;
+        }
+
+        .spec-list {
+            padding-left: 18px;
+            margin: 10px 0 16px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .spec-list li {
+            margin-bottom: 5px;
+        }
+
+        /* Formularios e Inputs */
+        .form-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: #181820;
+            border: 1px solid #2d2d38;
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(0, 255, 204, 0.2);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.78rem;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .input-error {
+            border-color: var(--error) !important;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Botones */
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            opacity: 0.95;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid #2d2d38;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            border-color: #444455;
+        }
+
+        .btn-add-cart {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            margin-top: 8px;
+        }
+
+        .btn-add-cart:hover {
+            background: rgba(0, 255, 204, 0.08);
+            color: white;
+        }
+
+        /* Pasos del Checkout (Barra de Progreso) */
+        .checkout-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .checkout-steps::before {
+            content: "";
+            position: absolute;
+            top: 12px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2d2d38;
+            z-index: 1;
+        }
+
+        .step-indicator {
+            position: relative;
+            z-index: 2;
+            width: 26px;
+            height: 26px;
+            background: #181820;
+            border: 2px solid #2d2d38;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .step-indicator.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+            background: var(--dark);
+        }
+
+        .step-indicator.completed {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--dark);
+        }
+
+        /* Reseñas / Opiniones */
+        .reviews-section {
+            margin-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 15px;
+        }
+
+        .reviews-title {
+            font-size: 0.95rem;
+            color: white;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--primary);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .stars-rating {
+            color: #ffb400;
+        }
+
+        /* Bloque de Carrito */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.9rem;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            padding-top: 15px;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        /* Elementos de carga y éxito */
+        .loader {
+            border: 4px solid #1c1c24;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 15px;
+            animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .receipt-box {
+            background: #16161e;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: left;
+            margin: 20px 0;
+            border: 1px dashed rgba(0, 255, 204, 0.3);
+            font-size: 0.88rem;
+        }
+
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        #no-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="stars-bg"></div>
+<div class="stars"></div>
+
+<!-- NAVBAR FIXED -->
+<div class="navbar">
+    <div class="navbar-brand" onclick="goToStore()">Play Crack</div>
+    <div class="search-box" id="nav-search-wrapper">
+        <input type="text" id="store-search" placeholder="Buscar hardware, juegos..." onkeyup="filterStore()">
+    </div>
+    <button class="cart-icon-btn" onclick="openCartScreen()">
+        🛒 <span class="cart-badge" id="cart-count">0</span>
+    </button>
+</div>
+
+<div class="store-container">
+
+    <!-- PANTALLA 1: TIENDA PRINCIPAL -->
+    <div id="screen-catalog" class="screen active">
+        <h1>Play Crack Store</h1>
+        <div class="slogan">Potencia pura y Calidad. Diseños oficiales de Play Crack Studios</div>
+
+        <div id="catalog-items">
+            <!-- Item 1 -->
+            <div class="product-card" data-name="in s pro consola especificaciones hardware doble pantalla lte alex adventure" data-type="console">
+                <span class="badge badge-console">Consola</span>
+                <h3>in S pro</h3>
+                <img src="external/image_1M5Hf5.png" alt="in S pro" class="product-img">
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top:0;">La revolución portátil definitiva en tamaño bolsillo.</p>
+                <div class="price">$800.00</div>
+                <button onclick="startSinglePurchase('in S pro', 800)">Comprar Ahora</button>
+                <button class="btn-secondary btn-add-cart" onclick="addToCart('in S pro', 800)">Añadir al Carrito</button>
+                
+                <div class="reviews-section">
+                    <div class="reviews-title"><span>Especificaciones Técnicas</span></div>
+                    <ul class="spec-list">
+                        <li><strong>Pantalla:</strong> Doble panel abatible de alta fidelidad</li>
+                        <li><strong>Conectividad:</strong> Barra móvil LTE integrada de fábrica</li>
+                        <li><strong>Mandos:</strong> Cruzeta clásica, sticks analógicos y botonera XYAB</li>
+                        <li><strong>Sistema:</strong> Kings OS optimizado para Play Crack</li>
+                    </ul>
+                    <div class="reviews-title"><span>Opiniones de la Comunidad</span> <span class="stars-rating">★★★★★ 4.9</span></div>
+                    <div class="review-card">
+                        <div class="review-header"><span>Alexander A.</span><span>★★★★★</span></div>
+                        Es súper compacta y el sistema dual corre los ports de maravilla sin calentarse.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="product-card" data-name="play crack 3 portal pro consola especificaciones mini-led refrigeracion liquida" data-type="console">
+                <span class="badge badge-console">Consola</span>
+                <h3>Play Crack 3 Portal Pro</h3>
+                <img src="external/image_1x9gZG.png" alt="Play Crack 3 Portal Pro" class="product-img">
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top:0;">Rendimiento gráfico avanzado de sobremesa en tus manos.</p>
+                <div class="price">$850.00</div>
+                <button onclick="startSinglePurchase('Play Crack 3 Portal Pro', 850)">Comprar Ahora</button>
+                <button class="btn-secondary btn-add-cart" onclick="addToCart('Play Crack 3 Portal Pro', 850)">Añadir al Carrito</button>
+                
+                <div class="reviews-section">
+                    <div class="reviews-title"><span>Especificaciones Técnicas</span></div>
+                    <ul class="spec-list">
+                        <li><strong>Panel:</strong> Mini-LED avanzado con tasa de refresco ultra fluida</li>
+                        <li><strong>Hardware:</strong> 32GB de memoria unificada de ultra baja latencia</li>
+                        <li><strong>Ventilación:</strong> Sistema exclusivo de refrigeración líquida interna</li>
+                        <li><strong>Gráficos:</strong> Núcleos dedicados para trazado de rayos nativo</li>
+                    </ul>
+                    <div class="reviews-title"><span>Opiniones de la Comunidad</span> <span class="stars-rating">★★★★★ 5.0</span></div>
+                    <div class="review-card">
+                        <div class="review-header"><span>GamerPro99</span><span>★★★★★</span></div>
+                        La pantalla mini-led tiene unos colores brutales, el diseño abierto es comodísimo.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="product-card" data-name="play crack zeta crystal consola especificaciones hardware chip ge a700" data-type="console">
+                <span class="badge badge-console">Consola</span>
+                <h3>Play crack Zeta Crystal</h3>
+                <img src="external/image_y2ZpR0.png" alt="Play crack Zeta Crystal" class="product-img">
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top:0;">Inspirada en líneas aerodinámicas de alta ingeniería.</p>
+                <div class="price">$1,500.00</div>
+                <button onclick="startSinglePurchase('Play crack Zeta Crystal', 1500)">Comprar Ahora</button>
+                <button class="btn-secondary btn-add-cart" onclick="addToCart('Play crack Zeta Crystal', 1500)">Añadir al Carrito</button>
+                
+                <div class="reviews-section">
+                    <div class="reviews-title"><span>Especificaciones Técnicas</span></div>
+                    <ul class="spec-list">
+                        <li><strong>Procesador:</strong> Chip premium GE a700 Modificado a máxima frecuencia</li>
+                        <li><strong>Memoria:</strong> 64GB de potencia bruta unificada indestructible</li>
+                        <li><strong>Chasis:</strong> Estructura elíptica reforzada contra impactos</li>
+                        <li><strong>Almacenamiento:</strong> SSD NVMe en formato Módulo ultra veloz</li>
+                    </ul>
+                    <div class="reviews-title"><span>Opiniones de la Comunidad</span> <span class="stars-rating">★★★★★ 4.8</span></div>
+                    <div class="review-card">
+                        <div class="review-header"><span>MafiaDeveloper</span><span>★★★★★</span></div>
+                        Un monstruo de consola. El chip a700 corre lo que le eches con tasas estables.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="product-card" data-name="battle flip 3 juego original shooter play crack" data-type="game">
+                <span class="badge badge-badge badge-game">Juego</span>
+                <h3>Battle Flip 3</h3>
+                <img src="external/image_yw9UiR.png" alt="Battle Flip 3" class="product-img">
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top:0;">El aclamado título original de Play Crack Studios.</p>
+                <div class="price">$59.99</div>
+                <button onclick="startSinglePurchase('Juego: Battle Flip 3', 59.99)">Comprar Ahora</button>
+                <button class="btn-secondary btn-add-cart" onclick="addToCart('Juego: Battle Flip 3', 59.99)">Añadir al Carrito</button>
+                
+                <div class="reviews-section">
+                    <div class="reviews-title"><span>Opiniones de la Comunidad</span> <span class="stars-rating">★★★★★ 5.0</span></div>
+                    <div class="review-card">
+                        <div class="review-header"><span>AlexStudioFans</span><span>★★★★★</span></div>
+                        ¡Por fin la tercera entrega! Una jugabilidad adictiva y un diseño artístico impecable.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="product-card" data-name="estuche rigido pointer accesorio calibracion precision" data-type="port">
+                <span class="badge badge-port">Accesorio</span>
+                <h3>Estuche Rígido Pointer</h3>
+                <img src="external/image_PCoLmb.png" alt="Estuche Pointer" class="product-img">
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top:0;">Kit oficial de resguardo y herramientas de calibración Pointer.</p>
+                <div class="price">$34.99</div>
+                <button onclick="startSinglePurchase('Estuche Pointer', 34.99)">Comprar Ahora</button>
+                <button class="btn-secondary btn-add-cart" onclick="addToCart('Estuche Pointer', 34.99)">Añadir al Carrito</button>
+                
+                <div class="reviews-section">
+                    <div class="reviews-title"><span>Opiniones de la Comunidad</span> <span class="stars-rating">★★★★★ 4.7</span></div>
+                    <div class="review-card">
+                        <div class="review-header"><span>TechReviewer</span><span>★★★★☆</span></div>
+                        Materiales resistentes y precisos para mantener los componentes a punto. Cumple 100%.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="no-results">No se encontraron consolas, juegos o puertos que coincidan con tu búsqueda.</div>
+    </div>
+
+    <!-- PANTALLA: VER CARRITO -->
+    <div id="screen-cart" class="screen">
+        <h3>Tu Carrito de Compras</h3>
+        <div id="cart-items-list">
+            <!-- Se llena con JS -->
+        </div>
+        <div class="cart-total-row">
+            <span>Subtotal:</span>
+            <span id="cart-subtotal-val">$0.00</span>
+        </div>
+        <div class="cart-total-row" style="font-size:0.9rem; color:var(--text-muted); font-weight:normal; padding-top:5px;">
+            <span>Envío e IVA (16%):</span>
+            <span id="cart-tax-val">$0.00</span>
+        </div>
+        <div class="cart-total-row" style="border-top:1px solid #2d2d38; margin-top:10px; padding-top:10px;">
+            <span>Total General:</span>
+            <span id="cart-total-val" style="color:var(--primary);">$0.00</span>
+        </div>
+        
+        <button style="margin-top:20px;" onclick="checkoutCart()">Proceder al Pago</button>
+        <button class="btn-secondary" onclick="nextScreen('screen-catalog')">Seguir Comprando</button>
+    </div>
+
+    <!-- PANTALLA CHECKOUT PASO 1: CONFIGURACIÓN DE HARDWARE -->
+    <div id="screen-checkout-p1" class="screen">
+        <div class="checkout-steps">
+            <div class="step-indicator active">1</div>
+            <div class="step-indicator">2</div>
+            <div class="step-indicator">3</div>
+        </div>
+        
+        <h3>Personaliza tu Hardware</h3>
+        <p id="p1-product-title" style="color:var(--primary); font-weight:600; margin-bottom:20px;"></p>
+        
+        <div class="form-group">
+            <label for="cfg-color">Selecciona el Color de la Consola</label>
+            <select id="cfg-color" onchange="playClickSound()">
+                <option value="Negro Ciberpunk">Negro Ciberpunk</option>
+                <option value="Blanco Glaciar">Blanco Glaciar</option>
+                <option value="Cristal Zeta">Cristal Zeta (Edición Limitada)</option>
+                <option value="Verde Criptón">Verde Criptón Neón</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="cfg-storage">Capacidad de Almacenamiento SSD</label>
+            <select id="cfg-storage" onchange="updateDynamicPrice()">
+                <option value="512GB">512 GB NVMe Base (Precio Estándar)</option>
+                <option value="1TB">1 TB NVMe Ultra (+$50.00)</option>
+                <option value="2TB">2 TB NVMe Hyper Módulo (+$120.00)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="cfg-warranty">Garantía Oficial Play Crack</label>
+            <select id="cfg-warranty" disabled>
+                <option value="3 años">Plan Platino: 3 Años Completos Incluidos ($0.00)</option>
+            </select>
+            <span style="font-size:0.75rem; color:var(--primary); display:block; margin-top:5px;">✓ Cobertura total de hardware Play Crack Studios activa.</span>
+        </div>
+
+        <div class="cart-total-row" style="background: rgba(255,255,255,0.02); padding:12px; border-radius:6px; margin-bottom:20px;">
+            <span>Precio Ajustado del Ítem:</span>
+            <span id="p1-live-price" style="color:var(--primary);">$0.00</span>
+        </div>
+
+        <button onclick="validateAndGoToP2()">Siguiente: Datos de Pago</button>
+        <button class="btn-secondary" onclick="nextScreen('screen-catalog')">Cancelar</button>
+    </div>
+
+    <!-- PANTALLA CHECKOUT PASO 2: DATOS DE LA TARJETA -->
+    <div id="screen-checkout-p2" class="screen">
+        <div class="checkout-steps">
+            <div class="step-indicator completed">1</div>
+            <div class="step-indicator active">2</div>
+            <div class="step-indicator">3</div>
+        </div>
+        
+        <h3>Método de Pago Seguro</h3>
+        
+        <div class="form-group">
+            <label>Nombre del Titular (Como aparece en la tarjeta)</label>
+            <input type="text" id="pay-name" placeholder="Alexander Arias" oninput="clearError('pay-name')">
+            <div class="error-message" id="err-pay-name">Por favor ingresa el nombre completo del titular.</div>
+        </div>
+
+        <div class="form-group">
+            <label>Número de Tarjeta de Crédito/Débito</label>
+            <input type="text" id="pay-card" placeholder="4152 0023 9945 1182" maxlength="19" oninput="formatCardNumber(this)">
+            <div class="error-message" id="err-pay-card">Ingresa un número de tarjeta válido de 16 dígitos.</div>
+        </div>
+
+        <div class="row">
+            <div class="form-group" style="flex: 1;">
+                <label>Vencimiento</label>
+                <input type="text" id="pay-expiry" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)">
+                <div class="error-message" id="err-pay-expiry">Formato MM/AA requerido.</div>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>CVV / CVC</label>
+                <input type="password" id="pay-cvv" placeholder="•••" maxlength="4" oninput="clearError('pay-cvv')">
+                <div class="error-message" id="err-pay-cvv">Código de 3 o 4 dígitos.</div>
+            </div>
+        </div>
+
+        <button onclick="validateAndGoToP3()">Siguiente: Detalles de Envío</button>
+        <button class="btn-secondary" onclick="goBackToP1()">Volver</button>
+    </div>
+
+    <!-- PANTALLA CHECKOUT PASO 3: DIRECCIÓN DE ENVÍO -->
+    <div id="screen-checkout-p3" class="screen">
+        <div class="checkout-steps">
+            <div class="step-indicator completed">1</div>
+            <div class="step-indicator completed">2</div>
+            <div class="step-indicator active">3</div>
+        </div>
+        
+        <h3>Destino de Envío</h3>
+        
+        <div class="form-group">
+            <label>Dirección de Calle y Número</label>
+            <input type="text" id="ship-address" placeholder="Av. Principal, Edificio Play Crack, Nro 7" oninput="clearError('ship-address')">
+            <div class="error-message" id="err-ship-address">La dirección de domicilio es obligatoria.</div>
+        </div>
+
+        <div class="row">
+            <div class="form-group" style="flex: 1;">
+                <label>País</label>
+                <input type="text" id="ship-country" placeholder="Venezuela" oninput="clearError('ship-country')">
+                <div class="error-message" id="err-ship-country">Ingresa el país.</div>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Estado / Provincia</label>
+                <input type="text" id="ship-state" placeholder="Anzoátegui" oninput="clearError('ship-state')">
+                <div class="error-message" id="err-ship-state">Ingresa el estado.</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group" style="flex: 1;">
+                <label>Ciudad</label>
+                <input type="text" id="ship-city" placeholder="El Tigre" oninput="clearError('ship-city')">
+                <div class="error-message" id="err-ship-city">Ingresa la ciudad.</div>
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Código Postal</label>
+                <input type="text" id="ship-zip" placeholder="6034" oninput="clearError('ship-zip')">
+                <div class="error-message" id="err-ship-zip">Código postal obligatorio.</div>
+            </div>
+        </div>
+
+        <div class="cart-total-row" style="border-top:1px solid #2d2d38; padding-top:15px; margin-bottom:15px;">
+            <span>Total Final a Pagar:</span>
+            <span id="p3-final-total" style="color:var(--primary); font-size:1.3rem;">$0.00</span>
+        </div>
+
+        <button onclick="processFinalOrder()">Confirmar y Ordenar Hardware</button>
+        <button class="btn-secondary" onclick="nextScreen('screen-checkout-p2')">Volver</button>
+    </div>
+
+    <!-- PANTALLA 4: ESTADO PROCESANDO / ÉXITO -->
+    <div id="screen-status" class="screen" style="text-align: center;">
+        <div id="loader-container">
+            <h3 id="loader-title">Procesando transacciones seguras...</h3>
+            <div class="loader"></div>
+        </div>
+        
+        <div id="success-container" style="display: none;">
+            <div class="success-icon">✓</div>
+            <h3>¡Transacción y Pedido Completados!</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Tu hardware oficial de Play Crack Studios ha sido aprobado.</p>
+            
+            <div class="receipt-box" id="order-receipt">
+                <!-- Generado dinámicamente -->
+            </div>
+
+            <button class="btn-secondary" onclick="resetStoreAndCatalog()">Volver a la Tienda Principal</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- CONTEXTO DE AUDIO WEB API PARA RETRO SOUNDS -->
+<script>
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playClickSound() {
+        try {
+            initAudio();
+            if (!audioCtx) return;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        } catch(e) {}
+    }
+
+    function playSuccessSound() {
+        try {
+            initAudio();
+            if (!audioCtx) return;
+            let now = audioCtx.currentTime;
+            
+            // Nota 1
+            let osc1 = audioCtx.createOscillator();
+            let gain1 = audioCtx.createGain();
+            osc1.type = 'square';
+            osc1.frequency.setValueAtTime(523.25, now); // C5
+            gain1.gain.setValueAtTime(0.08, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.12);
+
+            // Nota 2 (Acorde alegre subsiguiente)
+            let osc2 = audioCtx.createOscillator();
+            let gain2 = audioCtx.createGain();
+            osc2.type = 'square';
+            osc2.frequency.setValueAtTime(659.25, now + 0.1); // E5
+            gain2.gain.setValueAtTime(0.08, now + 0.1);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.start(now + 0.1);
+            osc2.stop(now + 0.22);
+
+            // Nota 3 final victoriosa
+            let osc3 = audioCtx.createOscillator();
+            let gain3 = audioCtx.createGain();
+            osc3.type = 'square';
+            osc3.frequency.setValueAtTime(783.99, now + 0.2); // G5
+            gain3.gain.setValueAtTime(0.1, now + 0.2);
+            gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+            osc3.connect(gain3);
+            gain3.connect(audioCtx.destination);
+            osc3.start(now + 0.2);
+            osc3.stop(now + 0.45);
+        } catch(e) {}
+    }
+</script>
+
+<!-- LÓGICA DE CONTROL DE LA TIENDA, CARRITO Y CHECKOUT -->
+<script>
+    // Variables globales de la app
+    let cart = [];
+    let currentPurchaseItem = null; // Si es compra directa o carrito
+    let currentBasePrice = 0;
+    let selectedExtraStoragePrice = 0;
+    let isCartCheckout = false;
+
+    function nextScreen(screenId) {
+        playClickSound();
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        window.scrollTo(0, 0);
+
+        // Controlar visibilidad del buscador de la barra superior según pantalla
+        if (screenId === 'screen-catalog') {
+            document.getElementById('nav-search-wrapper').style.display = 'block';
+        } else {
+            document.getElementById('nav-search-wrapper').style.display = 'none';
+        }
+    }
+
+    function goToStore() {
+        nextScreen('screen-catalog');
+    }
+
+    // Filtro inteligente en tiempo real
+    function filterStore() {
+        const query = document.getElementById('store-search').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('#catalog-items .product-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const searchMeta = card.getAttribute('data-name');
+            if (searchMeta.includes(query)) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        document.getElementById('no-results').style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
+
+    // Gestión del Carrito
+    function updateCartBadge() {
+        const badge = document.getElementById('cart-count');
+        badge.innerText = cart.length;
+    }
+
+    function addToCart(name, price) {
+        playClickSound();
+        cart.push({ name: name, price: price });
+        updateCartBadge();
+        alert('¡' + name + ' añadido correctamente a tu carrito de compras!');
+    }
+
+    function openCartScreen() {
+        const container = document.getElementById('cart-items-list');
+        container.innerHTML = '';
+
+        if (cart.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding: 25px 0; color:var(--text-muted);">Tu carrito está vacío, bro. Añade algún hardware o juego.</div>';
+            document.getElementById('cart-subtotal-val').innerText = '$0.00';
+            document.getElementById('cart-tax-val').innerText = '$0.00';
+            document.getElementById('cart-total-val').innerText = '$0.00';
+        } else {
+            let subtotal = 0;
+            cart.forEach((item, index) => {
+                subtotal += item.price;
+                const row = document.createElement('div');
+                row.className = 'cart-item';
+                row.innerHTML = '<span>' + item.name + '</span>' +
+                                '<div><span style="color:var(--primary); margin-right:15px; font-weight:600;">$' + item.price.toFixed(2) + '</span>' +
+                                '<span style="color:var(--error); cursor:pointer; font-size:0.8rem;" onclick="removeFromCart(' + index + ')">❌</span></div>';
+                container.appendChild(row);
+            });
+
+            let tax = subtotal * 0.16; // 16% IVA y manejo de envío simulado
+            let grandTotal = subtotal + tax;
+
+            document.getElementById('cart-subtotal-val').innerText = '$' + subtotal.toFixed(2);
+            document.getElementById('cart-tax-val').innerText = '$' + tax.toFixed(2);
+            document.getElementById('cart-total-val').innerText = '$' + grandTotal.toFixed(2);
+        }
+
+        nextScreen('screen-cart');
+    }
+
+    function removeFromCart(index) {
+        playClickSound();
+        cart.splice(index, 1);
+        updateCartBadge();
+        openCartScreen();
+    }
+
+    // Iniciar flujos de compra
+    function startSinglePurchase(name, price) {
+        isCartCheckout = false;
+        currentPurchaseItem = name;
+        currentBasePrice = price;
+        selectedExtraStoragePrice = 0;
+        
+        document.getElementById('p1-product-title').innerText = "Comprando: " + name;
+        
+        // Mostrar u ocultar opciones de almacenamiento según si es consola o software/accesorio
+        const storageGroup = document.getElementById('cfg-storage').parentNode;
+        if (name.includes('Juego') || name.includes('Estuche')) {
+            storageGroup.style.display = 'none';
+            document.getElementById('cfg-storage').value = "512GB";
+        } else {
+            storageGroup.style.display = 'block';
+        }
+        
+        updateDynamicPrice();
+        nextScreen('screen-checkout-p1');
+    }
+
+    function checkoutCart() {
+        if (cart.length === 0) {
+            alert('Añade productos antes de proceder, bro.');
+            return;
+        }
+        isCartCheckout = true;
+        currentPurchaseItem = "Pedido del Carrito (" + cart.length + " ítems)";
+        
+        // Calcular subtotal acumulado del carrito
+        let subtotal = 0;
+        cart.forEach(i => subtotal += i.price);
+        currentBasePrice = subtotal;
+        selectedExtraStoragePrice = 0;
+
+        document.getElementById('p1-product-title').innerText = currentPurchaseItem;
+        
+        // Ocultar almacenamiento específico en carrito genérico
+        document.getElementById('cfg-storage').parentNode.style.display = 'none';
+        document.getElementById('cfg-storage').value = "512GB";
+
+        updateDynamicPrice();
+        nextScreen('screen-checkout-p1');
+    }
+
+    // Actualización de Precios Dinámicos e Impuestos
+    function updateDynamicPrice() {
+        const storageVal = document.getElementById('cfg-storage').value;
+        if (storageVal === '1TB') {
+            selectedExtraStoragePrice = 50;
+        } else if (storageVal === '2TB') {
+            selectedExtraStoragePrice = 120;
+        } else {
+            selectedExtraStoragePrice = 0;
+        }
+
+        let baseConAjuste = currentBasePrice + selectedExtraStoragePrice;
+        let impuesto = baseConAjuste * 0.16;
+        let totalFinal = baseConAjuste + impuesto;
+
+        document.getElementById('p1-live-price').innerText = '$' + baseConAjuste.toFixed(2) + ' (+ 16% IVA)';
+        document.getElementById('p3-final-total').innerText = '$' + totalFinal.toFixed(2);
+    }
+
+    // Validaciones de Formularios
+    function clearError(id) {
+        document.getElementById(id).classList.remove('input-error');
+        document.getElementById('err-' + id).style.display = 'none';
+    }
+
+    function showError(id) {
+        document.getElementById(id).classList.add('input-error');
+        document.getElementById('err-' + id).style.display = 'block';
+    }
+
+    function formatCardNumber(input) {
+        clearError('pay-card');
+        let v = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let matches = v.match(/\d{4,16}/g);
+        let match = matches && matches[0] || '';
+        let parts = [];
+
+        for (let i=0, len=match.length; i<len; i+=4) {
+            parts.push(match.substring(i, i+4));
+        }
+
+        if (parts.length > 0) {
+            input.value = parts.join(' ');
+        } else {
+            input.value = v;
+        }
+    }
+
+    function formatExpiry(input) {
+        clearError('pay-expiry');
+        let v = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        if (v.length >= 2) {
+            input.value = v.substring(0, 2) + '/' + v.substring(2, 4);
+        } else {
+            input.value = v;
+        }
+    }
+
+    function validateAndGoToP2() {
+        nextScreen('screen-checkout-p2');
+    }
+
+    function goBackToP1() {
+        nextScreen('screen-checkout-p1');
+    }
+
+    function validateAndGoToP3() {
+        let isValid = true;
+
+        // Validar Nombre
+        const name = document.getElementById('pay-name').value.trim();
+        if (name.length < 4) {
+            showError('pay-name');
+            isValid = false;
+        } else {
+            clearError('pay-name');
+        }
+
+        // Validar Tarjeta (16 dígitos sin espacios)
+        const card = document.getElementById('pay-card').value.replace(/\s+/g, '');
+        if (card.length !== 16 || isNaN(card)) {
+            showError('pay-card');
+            isValid = false;
+        } else {
+            clearError('pay-card');
+        }
+
+        // Validar Expiración
+        const expiry = document.getElementById('pay-expiry').value.trim();
+        if (expiry.length !== 5 || !expiry.includes('/')) {
+            showError('pay-expiry');
+            isValid = false;
+        } else {
+            clearError('pay-expiry');
+        }
+
+        // Validar CVV
+        const cvv = document.getElementById('pay-cvv').value.trim();
+        if (cvv.length < 3 || isNaN(cvv)) {
+            showError('pay-cvv');
+            isValid = false;
+        } else {
+            clearError('pay-cvv');
+        }
+
+        if (isValid) {
+            nextScreen('screen-checkout-p3');
+        }
+    }
+
+    function validateP3Form() {
+        let isValid = true;
+
+        const fields = ['ship-address', 'ship-country', 'ship-state', 'ship-city', 'ship-zip'];
+        fields.forEach(f => {
+            const val = document.getElementById(f).value.trim();
+            if (val === '') {
+                showError(f);
+                isValid = false;
+            } else {
+                clearError(f);
+            }
+        });
+
+        return isValid;
+    }
+
+    // Simulación final de procesamiento de orden
+    function processFinalOrder() {
+        if (!validateP3Form()) return;
+
+        nextScreen('screen-status');
+        document.getElementById('loader-container').style.display = 'block';
+        document.getElementById('success-container').style.display = 'none';
+
+        // Generar recibo dinámico en tiempo real recopilando los datos ingresados
+        const prodName = currentPurchaseItem;
+        const color = document.getElementById('cfg-color').value;
+        const storage = document.getElementById('cfg-storage').value;
+        const warranty = document.getElementById('cfg-warranty').value;
+        
+        const shipAddr = document.getElementById('ship-address').value;
+        const shipCity = document.getElementById('ship-city').value;
+        const shipState = document.getElementById('ship-state').value;
+        const shipCountry = document.getElementById('ship-country').value;
+        const finalPriceText = document.getElementById('p3-final-total').innerText;
+
+        let receiptHTML = '<h4>🧾 RECIBO OFICIAL DE COMPRA</h4>' +
+                          '<div class="receipt-line"><span><strong>Ítem(s):</strong></span> <span>' + prodName + '</span></div>' +
+                          '<div class="receipt-line"><span><strong>Color Elegido:</strong></span> <span>' + color + '</span></div>';
+        
+        // Solo agregar almacenamiento si no es software o un pack del carrito
+        if (document.getElementById('cfg-storage').parentNode.style.display !== 'none') {
+            receiptHTML += '<div class="receipt-line"><span><strong>Almacenamiento:</strong></span> <span>' + storage + ' NVMe</span></div>';
+        }
+
+        receiptHTML += '<div class="receipt-line"><span><strong>Garantía:</strong></span> <span>' + warranty + ' Activa</span></div>' +
+                       '<hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 10px 0;">' +
+                       '<div class="receipt-line"><span><strong>Destinatario:</strong></span> <span>' + document.getElementById('pay-name').value + '</span></div>' +
+                       '<div class="receipt-line"><span><strong>Dirección de Entrega:</strong></span> <span style="text-align:right; max-width:60%;">' + shipAddr + ', ' + shipCity + ' (' + shipState + '), ' + shipCountry + '</span></div>' +
+                       '<hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 10px 0;">' +
+                       '<div class="receipt-line" style="font-size:1.05rem; color:var(--primary); font-weight:bold;"><span>Total Debitado (IVA Inc.):</span> <span>' + finalPriceText + '</span></div>';
+
+        document.getElementById('order-receipt').innerHTML = receiptHTML;
+
+        // Simulación de carga de pasarela de pago con delay aleatorio de seguridad
+        setTimeout(() => {
+            document.getElementById('loader-container').style.display = 'none';
+            document.getElementById('success-container').style.display = 'block';
+            playSuccessSound();
+            
+            // Vaciar carrito si la compra provino de allí
+            if (isCartCheckout) {
+                cart = [];
+                updateCartBadge();
+            }
+        }, 3200);
+    }
+
+    function resetStoreAndCatalog() {
+        // Limpiar inputs de formularios
+        document.getElementById('pay-name').value = '';
+        document.getElementById('pay-card').value = '';
+        document.getElementById('pay-expiry').value = '';
+        document.getElementById('pay-cvv').value = '';
+        document.getElementById('ship-address').value = '';
+        document.getElementById('ship-zip').value = '';
+        document.getElementById('store-search').value = '';
+        filterStore();
+        nextScreen('screen-catalog');
+    }
+</script>
+
+</body>
+</html>
