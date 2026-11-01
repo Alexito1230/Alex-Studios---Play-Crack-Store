@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play Crack Store</title>
+    <title>Play Crack Store - Mega Ecosistema</title>
     <style>
         :root {
             --primary: #00ffcc;
             --dark: #0a0a0c;
-            --card-bg: #141419;
+            --card-bg: rgba(20, 20, 25, 0.75);
             --text: #ffffff;
             --text-muted: #8a8a93;
             --error: #ff4a4a;
+            --current-color: #00ffcc;
         }
 
         body {
@@ -19,993 +20,1097 @@
             background-color: var(--dark);
             color: var(--text);
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 0;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Fondo espacial animado */
-        .stars-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, transparent 0%, var(--dark) 80%),
-                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><circle cx="50" cy="80" r="1.5" fill="%23fff" opacity="0.6"/><circle cx="150" cy="40" r="1" fill="%23fff" opacity="0.4"/><circle cx="280" cy="120" r="2" fill="%2300ffcc" opacity="0.5"/><circle cx="350" cy="250" r="1.5" fill="%23fff" opacity="0.7"/><circle cx="90" cy="320" r="1" fill="%23fff" opacity="0.5"/><circle cx="220" cy="280" r="2" fill="%23fff" opacity="0.8"/></svg>');
-            background-repeat: repeat;
-            animation: spaceScroll 40s linear infinite;
-            z-index: -2;
-        }
-
-        .nebula-bg {
+        /* Fondos Animados Alternables */
+        .bg-layer {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 80% 20%, rgba(0, 255, 204, 0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 10% 80%, rgba(138, 138, 147, 0.05) 0%, transparent 50%);
-            z-index: -1;
+            z-index: -2;
+            pointer-events: none;
         }
 
-        @keyframes spaceScroll {
+        #bg-stars {
+            background: radial-gradient(circle at center, #111118 0%, #050508 100%);
+        }
+        .star-field {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+            background-size: 550px 550px, 350px 350px;
+            background-position: 0 0, 40px 60px;
+            animation: moveStars 40s linear infinite;
+            opacity: 0.5;
+        }
+        @keyframes moveStars {
             from { transform: translate(0, 0); }
             to { transform: translate(-50%, -50%); }
         }
 
-        .store-container {
-            width: 100%;
-            max-width: 480px;
-            background: rgba(20, 20, 25, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            z-index: 10;
+        #bg-neon {
+            display: none;
+            background: linear-gradient(180deg, #05050a 0%, #100515 100%);
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 0, 128, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 0, 128, 0.05) 1px, transparent 1px);
+            animation: moveGrid 10s linear infinite;
+        }
+        @keyframes moveGrid {
+            from { background-position: 0 0; }
+            to { background-position: 0 40px; }
         }
 
-        /* Navbar Superior */
-        .navbar {
+        /* Barra Superior */
+        .nav-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 12, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #22222a;
+            padding: 10px 20px;
+        }
+        .nav-main {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: rgba(28, 28, 36, 0.8);
-            padding: 10px 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 15px;
         }
-
+        .logo-area h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0,255,204,0.3);
+            cursor: pointer;
+        }
         .search-box {
             flex: 1;
+            max-width: 500px;
             position: relative;
         }
-
         .search-box input {
             width: 100%;
-            padding: 10px 12px;
-            background: #0a0a0c;
+            padding: 10px 15px;
+            background: #141419;
             border: 1px solid #2d2d38;
-            border-radius: 8px;
+            border-radius: 20px;
             color: white;
             box-sizing: border-box;
-            font-size: 0.9rem;
         }
-
-        .cart-icon-btn {
-            background: #1c1c24;
-            border: 1px solid #2d2d38;
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
             color: white;
-            padding: 10px;
-            border-radius: 8px;
+            font-size: 1.3rem;
             cursor: pointer;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 5px;
+            transition: transform 0.2s;
         }
-
-        .cart-count {
+        .icon-btn:hover { transform: scale(1.1); }
+        .badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -2px;
+            right: -2px;
             background: var(--primary);
-            color: var(--dark);
-            font-size: 0.75rem;
+            color: #000;
+            font-size: 0.7rem;
             font-weight: bold;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Categorías */
+        .categories-bar {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 10px;
+            max-width: 1200px;
+            margin: 8px auto 0 auto;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 5px;
         }
-
-        h1, h2, h3 {
-            margin-top: 0;
-            font-weight: 700;
-        }
-
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            font-size: 1.8rem;
-            margin-bottom: 4px;
-        }
-
-        .slogan {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
-
-        /* Pantallas */
-        .screen {
-            display: none;
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Tarjetas de Producto */
-        .product-card {
-            background: rgba(28, 28, 36, 0.6);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 16px;
+        .cat-btn {
+            background: #1c1c24;
             border: 1px solid #2d2d38;
-            transition: transform 0.2s, border-color 0.2s;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-
-        .product-card:hover {
-            transform: translateY(-2px);
+        .cat-btn.active, .cat-btn:hover {
+            background: var(--primary);
+            color: #0a0a0c;
             border-color: var(--primary);
         }
 
-        .product-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        /* Contenido General */
+        .main-layout {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 20px;
+        }
+        @media(max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
         }
 
-        .badge {
-            font-size: 0.7rem;
-            padding: 4px 8px;
-            border-radius: 6px;
+        .side-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Contenedor Store */
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #22222a;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border-color: var(--primary);
+        }
+        .tag-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
             font-weight: bold;
             text-transform: uppercase;
         }
-        .badge-console { background: rgba(0, 255, 204, 0.15); color: var(--primary); }
-        .badge-game { background: rgba(255, 184, 0, 0.15); color: #ffb800; }
-        .badge-accessory { background: rgba(154, 90, 255, 0.15); color: #9a5aff; }
+        .tag-new { background: #00ffcc; color: #000; }
+        .tag-reac { background: #ffaa00; color: #000; }
+        .tag-used { background: #ff4a4a; color: #fff; }
+        .tag-soft { background: #9900ff; color: #fff; }
 
-        .price {
+        .price-line {
+            font-size: 1.25rem;
             color: var(--primary);
             font-weight: bold;
-            font-size: 1.1rem;
-            margin: 6px 0;
+            margin: 10px 0;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-right: 5px;
         }
 
         .specs-list {
-            padding-left: 18px;
-            margin: 8px 0;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .specs-list li { margin-bottom: 3px; }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .btn-cart {
-            background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            flex: 1;
-        }
-        .btn-cart:hover { background: rgba(0, 255, 204, 0.08); }
-
-        .btn-buy {
-            background: var(--primary);
-            color: var(--dark);
-            flex: 1;
-        }
-
-        /* Pasos del Checkout */
-        .checkout-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background: #101014;
-            padding: 10px;
-            border-radius: 10px;
             font-size: 0.8rem;
-        }
-
-        .step-indicator { color: var(--text-muted); font-weight: 500; }
-        .step-indicator.active { color: var(--primary); font-weight: bold; }
-
-        /* Configurator Choices */
-        .choice-title {
-            font-size: 0.85rem;
             color: var(--text-muted);
-            margin-bottom: 6px;
-            font-weight: 600;
+            padding-left: 15px;
+            margin: 10px 0;
         }
 
-        .grid-choices {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .choice-btn {
-            background: #1c1c24;
-            border: 1px solid #2d2d38;
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-
-        .choice-btn.selected {
-            border-color: var(--primary);
-            background: rgba(0, 255, 204, 0.1);
-            color: var(--primary);
-        }
-
-        /* Formularios */
-        .form-group { margin-bottom: 14px; position: relative; }
-        label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: var(--text-muted); }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            background: #1c1c24;
-            border: 1px solid #2d2d38;
-            border-radius: 8px;
-            color: white;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
-        }
-
-        input:focus, select:focus { outline: none; border-color: var(--primary); }
-        input.invalid { border-color: var(--error) !important; }
-        
-        .error-msg {
-            color: var(--error);
+        .reviews-box {
+            border-top: 1px solid #22222a;
+            padding-top: 8px;
+            margin-top: 10px;
             font-size: 0.75rem;
-            margin-top: 4px;
-            display: none;
         }
+        .stars { color: #ffcc00; }
 
-        .row { display: flex; gap: 12px; }
-
-        button {
-            width: 100%;
-            padding: 14px;
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        button.buy-btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 10px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 0.95rem;
             cursor: pointer;
-            border: none;
-            transition: opacity 0.2s, transform 0.1s;
         }
-        button:active { transform: scale(0.98); }
-        
-        .btn-primary { background: var(--primary); color: var(--dark); }
-        .btn-secondary { background: transparent; color: var(--text-muted); border: 1px solid #2d2d38; margin-top: 8px; }
-        .btn-secondary:hover { background: #1c1c24; color: white; }
-
-        /* Reseñas */
-        .reviews-section {
-            margin-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 10px;
-        }
-        .review-title { font-size: 0.8rem; font-weight: bold; color: var(--primary); margin-bottom: 4px; }
-        .review-text { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
-
-        /* Loader */
-        .loader {
-            border: 4px solid #1c1c24;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Carrito Dropdown Screen */
-        .cart-item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #2d2d38;
-        }
-        .cart-item-info { font-size: 0.9rem; }
-        .cart-item-price { color: var(--primary); font-weight: bold; font-size: 0.9rem; }
-        .remove-btn { background: transparent; color: var(--error); border: none; cursor: pointer; font-size: 0.8rem; padding: 4px; width: auto; }
-
-        /* Recibo */
-        .receipt-box {
-            background: #0a0a0c;
-            border-radius: 10px;
-            padding: 14px;
-            margin: 14px 0;
-            text-align: left;
+        button.cart-add-btn {
+            background: #1c1c24;
+            color: white;
             border: 1px solid #2d2d38;
-            font-size: 0.85rem;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
         }
-        .receipt-line { display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .receipt-total { border-top: 1px solid #2d2d38; padding-top: 6px; font-weight: bold; color: var(--primary); }
 
-        #no-results {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 20px;
+        /* Modales / Checkout de 3 Pasos flotante */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
             display: none;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
         }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        .modal-card {
+            background: #141419;
+            width: 100%;
+            max-width: 460px;
+            border-radius: 16px;
+            border: 2px solid var(--current-color);
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute; top: 15px; right: 15px;
+            background: none; border: none; color: white;
+            font-size: 1.2rem; cursor: pointer;
+        }
+
+        .step-indicator {
+            display: flex; justify-content: space-between; margin-bottom: 20px;
+            border-bottom: 1px solid #22222a; padding-bottom: 10px;
+        }
+        .step-dot { font-size: 0.8rem; color: var(--text-muted); }
+        .step-dot.active { color: var(--primary); font-weight: bold; }
+
+        .checkout-step { display: none; }
+        .checkout-step.active { display: block; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 10px; background: #1c1c24; border: 1px solid #2d2d38;
+            border-radius: 8px; color: white; box-sizing: border-box;
+        }
+        .form-group input.error-field { border-color: var(--error); box-shadow: 0 0 5px rgba(255,74,74,0.3); }
+
+        /* Estilo interruptor */
+        .switch-row { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; }
+        .toggle-switch {
+            position: relative; display: inline-block; width: 44px; height: 22px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #2d2d38; transition: .3s; border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* Chat Flotante */
+        .chat-bubble {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--primary); color: #000;
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; cursor: pointer; z-index: 999;
+            box-shadow: 0 5px 20px rgba(0,255,204,0.4);
+        }
+        .chat-window {
+            position: fixed; bottom: 80px; right: 20px;
+            width: 300px; height: 400px; background: #141419;
+            border: 1px solid #2d2d38; border-radius: 12px;
+            z-index: 999; display: none; flex-direction: column;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .chat-header { background: #1c1c24; padding: 10px; font-weight: bold; border-bottom: 1px solid #2d2d38; display: flex; justify-content: space-between; }
+        .chat-messages { flex: 1; padding: 10px; overflow-y: auto; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; }
+        .msg.bot { background: #1c1c24; align-self: flex-start; }
+        .msg.user { background: var(--primary); color: #000; align-self: flex-end; }
+        .chat-input-area { display: flex; border-top: 1px solid #2d2d38; }
+        .chat-input-area input { flex: 1; border: none; padding: 10px; background: #0a0a0c; color: white; }
+        .chat-input-area button { background: var(--primary); border: none; padding: 10px; cursor: pointer; font-weight: bold; }
+
+        /* Ruleta */
+        .wheel-container { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 15px 0; }
+        .wheel {
+            width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--primary);
+            position: relative; transition: transform 3s cubic-bezier(0.1, 0.8, 0.1, 1);
+            background: conic-gradient(from 0deg, #ff4a4a 0deg 90deg, #ffaa00 90deg 180deg, #9900ff 180deg 270deg, #00ffcc 270deg 360deg);
+        }
+        .wheel-pointer {
+            width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent;
+            border-top: 15px solid white; position: absolute; z-index: 10; margin-top: -8px;
+        }
+
+        /* Utilidades */
+        .text-center { text-align: center; }
+        .no-results { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-<div class="stars-bg"></div>
-<div class="nebula-bg"></div>
+    <!-- Fondos de Entorno -->
+    <div id="bg-stars" class="bg-layer"><div class="star-field"></div></div>
+    <div id="bg-neon" class="bg-layer"></div>
 
-<div class="store-container">
-    
-    <!-- NAVBAR ACCESIBLE EN LA TIENDA -->
-    <div id="store-nav" class="navbar">
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="Buscar consolas, juegos, ports..." oninput="filterStore()">
+    <!-- Barra de Navegación Fija -->
+    <nav class="nav-container">
+        <div class="nav-main">
+            <div class="logo-area" onclick="filterCategory('all')">
+                <h1 id="txt-logo">Play Crack Store</h1>
+            </div>
+            <div class="search-box">
+                <input type="text" id="store-search" oninput="searchItems()" placeholder="Buscar consolas, juegos, ports, specs...">
+            </div>
+            <div class="nav-actions">
+                <button class="icon-btn" onclick="toggleLang()" title="Idioma">🌐 <span id="lang-indicator" style="font-size:0.75rem">ES</span></button>
+                <button class="icon-btn" onclick="openUserModal()" title="Mi Perfil">👤</button>
+                <button class="icon-btn" onclick="openCartModal()" title="Carrito">
+                    🛒 <span class="badge" id="cart-counter">0</span>
+                </button>
+            </div>
         </div>
-        <button class="cart-icon-btn" onclick="openCartView()">
-            🛒 <span class="cart-count" id="cart-counter-badge">0</span>
-        </button>
-    </div>
 
-    <!-- PANTALLA 1: CATÁLOGO DE LA TIENDA -->
-    <div id="screen-catalog" class="screen active">
-        <h1>Play Crack Store</h1>
-        <div class="slogan">Potencia pura y Calidad Estelar</div>
+        <!-- Barra de Categorías -->
+        <div class="categories-bar">
+            <button class="cat-btn active" id="btn-cat-all" onclick="filterCategory('all')">Todo / All</button>
+            <button class="cat-btn" id="btn-cat-reac" onclick="filterCategory('reconditioned')">Reacondicionadas</button>
+            <button class="cat-btn" id="btn-cat-used" onclick="filterCategory('used')">Usadas</button>
+            <button class="cat-btn" id="btn-cat-news" onclick="filterCategory('novedades')">Novedades</button>
+            <button class="cat-btn" id="btn-cat-games" onclick="filterCategory('games')">Nuevos Juegos & Ports</button>
+            <button class="cat-btn" id="btn-cat-coins" onclick="filterCategory('coins')">Crack Coins & Plus</button>
+        </div>
+    </nav>
 
-        <div id="no-results">No se encontraron productos.</div>
+    <!-- Layout Principal -->
+    <main class="main-layout">
+        <aside class="side-controls">
+            <label style="font-size:0.75rem; color:var(--text-muted)">ENTORNO / THEME</label>
+            <button class="cat-btn" onclick="changeTheme('stars')">Espacio</button>
+            <button class="cat-btn" onclick="changeTheme('neon')">Neon Grid</button>
+        </aside>
 
-        <div id="products-list">
-            <!-- in S series -->
-            <div class="product-card" data-name="in s series pro plus consola hardware">
-                <div class="product-header">
-                    <h3>in S series</h3>
-                    <span class="badge badge-console">Consola</span>
-                </div>
-                <div class="price">Desde $700.00 - $800.00</div>
-                <ul class="specs-list">
-                    <li><strong>Variantes:</strong> s plus (Compacta) / s pro (Potente)</li>
-                    <li><strong>Pantalla:</strong> Doble panel táctil integrado con Barra LTE</li>
-                    <li><strong>OS:</strong> Kings Sistema Operativo de alto rendimiento</li>
-                </ul>
-                <div class="reviews-section">
-                    <div class="review-title">⭐ 4.9/5 - CrackGamer:</div>
-                    <div class="review-text">"La s pro corre los emuladores volando. El tamaño compacto de la plus es genial."</div>
-                </div>
-                <div class="btn-group">
-                    <button class="btn-cart" onclick="triggerInSConsolidation('cart')">Añadir al Carrito</button>
-                    <button class="btn-buy" onclick="triggerInSConsolidation('direct')">Compra Directa</button>
-                </div>
-            </div>
+        <section class="store-grid" id="products-display">
+            <!-- Render dinámico desde JavaScript -->
+        </section>
+    </main>
 
-            <!-- Play Crack 3 Portal Pro -->
-            <div class="product-card" data-name="play crack 3 portal pro consola hardware">
-                <div class="product-header">
-                    <h3>Play Crack 3 Portal Pro</h3>
-                    <span class="badge badge-console">Consola</span>
-                </div>
-                <div class="price">$850.00</div>
-                <ul class="specs-list">
-                    <li><strong>Panel:</strong> Mini-LED híbrido de alta tasa de refresco</li>
-                    <li><strong>RAM:</strong> 32GB LPDDR4X unificada</li>
-                    <li><strong>Ventilación:</strong> Disipación líquida silenciosa</li>
-                </ul>
-                <div class="reviews-section">
-                    <div class="review-title">⭐ 4.8/5 - AlexV:</div>
-                    <div class="review-text">"Pura potencia brutal, la pantalla Mini-LED no cansa nada la vista."</div>
-                </div>
-                <div class="btn-group">
-                    <button class="btn-cart" onclick="addToCart('Play Crack 3 Portal Pro', 850)">Añadir al Carrito</button>
-                    <button class="btn-buy" onclick="buyDirectly('Play Crack 3 Portal Pro', 850)">Compra Directa</button>
-                </div>
-            </div>
-
-            <!-- Play crack Zeta Crystal -->
-            <div class="product-card" data-name="play crack zeta crystal consola hardware">
-                <div class="product-header">
-                    <h3>Play crack Zeta Crystal</h3>
-                    <span class="badge badge-console">Consola</span>
-                </div>
-                <div class="price">$1,500.00</div>
-                <ul class="specs-list">
-                    <li><strong>Hardware:</strong> Chip GE a700 Modificado Avanzado</li>
-                    <li><strong>Chasis:</strong> Estructura elíptica reforzada aeroespacial</li>
-                    <li><strong>RAM:</strong> 64GB de potencia bruta unificada</li>
-                </ul>
-                <div class="btn-group">
-                    <button class="btn-cart" onclick="addToCart('Play crack Zeta Crystal', 1500)">Añadir al Carrito</button>
-                    <button class="btn-buy" onclick="buyDirectly('Play crack Zeta Crystal', 1500)">Compra Directa</button>
-                </div>
-            </div>
-
-            <!-- Battle Flip 3 -->
-            <div class="product-card" data-name="battle flip 3 juego shooter mafia deslive">
-                <div class="product-header">
-                    <h3>Battle Flip 3</h3>
-                    <span class="badge badge-game">Juego</span>
-                </div>
-                <div class="price">$60.00</div>
-                <ul class="specs-list">
-                    <li><strong>Género:</strong> Arcade estratégico con físicas avanzadas</li>
-                    <li><strong>Optimización:</strong> Nativo para ecosistemas Play Crack</li>
-                </ul>
-                <div class="btn-group">
-                    <button class="btn-cart" onclick="addToCart('Battle Flip 3', 60)">Añadir al Carrito</button>
-                    <button class="btn-buy" onclick="buyDirectly('Battle Flip 3', 60)">Compra Directa</button>
-                </div>
-            </div>
-
-            <!-- Estuche Rigido Pointer -->
-            <div class="product-card" data-name="estuche rigido pointer accesorio estuche azul">
-                <div class="product-header">
-                    <h3>Estuche Rígido Pointer</h3>
-                    <span class="badge badge-accessory">Accesorio</span>
-                </div>
-                <div class="price">$45.00</div>
-                <ul class="specs-list">
-                    <li><strong>Estructura:</strong> Polímero azul de alta resistencia contra impactos</li>
-                    <li><strong>Extras:</strong> Compartimento para cables y tarjetas de expansión</li>
-                </ul>
-                <div class="btn-group">
-                    <button class="btn-cart" onclick="addToCart('Estuche Rígido Pointer', 45)">Añadir al Carrito</button>
-                    <button class="btn-buy" onclick="buyDirectly('Estuche Rígido Pointer', 45)">Compra Directa</button>
-                </div>
-            </div>
+    <!-- Burbuja y Ventana de Chat -->
+    <div class="chat-bubble" onclick="toggleChat()">💬</div>
+    <div class="chat-window" id="chat-win">
+        <div class="chat-header">
+            <span>Play Crack Support</span>
+            <button style="background:none; border:none; color:white; cursor:pointer;" onclick="toggleChat()">X</button>
+        </div>
+        <div class="chat-messages" id="chat-msg-box">
+            <div class="msg bot">¡Hola! Bienvenido al soporte técnico de Play Crack Studios. ¿En qué puedo ayudarte con tus consolas?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Pregunta sobre tu orden..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()">></button>
         </div>
     </div>
 
-    <!-- PANTALLA DE DETALLE INTERMEDIO PARA LA IN S SERIES -->
-    <div id="screen-ins-config" class="screen">
-        <h3>Configuración de tu in S series</h3>
-        
-        <div class="choice-title">Selecciona el Modelo:</div>
-        <div class="grid-choices">
-            <div id="model-plus" class="choice-btn selected" onclick="selectModel('plus', 700)">
-                <strong>s plus</strong><br><span style="font-size:0.75rem;">Compacta ($700)</span>
-            </div>
-            <div id="model-pro" class="choice-btn" onclick="selectModel('pro', 800)">
-                <strong>s pro</strong><br><span style="font-size:0.75rem;">Potente ($800)</span>
-            </div>
-        </div>
-
-        <div class="choice-title">Color de la Consola:</div>
-        <div class="grid-choices">
-            <div id="color-ciber" class="choice-btn selected" onclick="selectColor('Negro Ciberpunk')">Negro Ciberpunk</div>
-            <div id="color-glaciar" class="choice-btn" onclick="selectColor('Blanco Glaciar')">Blanco Glaciar</div>
-        </div>
-
-        <div class="choice-title">Almacenamiento:</div>
-        <div class="grid-choices">
-            <div id="storage-base" class="choice-btn selected" onclick="selectStorage('512GB', 0)">512GB (Base)</div>
-            <div id="storage-up" class="choice-btn" onclick="selectStorage('1TB', 50)">1TB (+$50)</div>
-        </div>
-
-        <div class="form-group">
-            <label>Garantía de Respaldo</label>
-            <select disabled><option>Garantía de 3 años de Play Crack Studios incluida</option></select>
-        </div>
-
-        <button class="btn-primary" onclick="confirmInSSelection()">Confirmar Selección</button>
-        <button class="btn-secondary" onclick="goBackToCatalog()">Cancelar</button>
-    </div>
-
-    <!-- PANTALLA DEL DETALLE DEL CARRITO -->
-    <div id="screen-cart-view" class="screen">
-        <h3>Tu Carrito de Compras</h3>
-        <div id="cart-items-container">
-            <!-- Se llena dinámicamente -->
-        </div>
-        <div style="margin-top:15px; text-align:right; font-weight:bold;">
-            Subtotal: <span id="cart-subtotal-text" style="color:var(--primary);">$0.00</span>
-        </div>
-        <button class="btn-primary" style="margin-top:15px;" onclick="checkoutCart()">Proceder a la Compra</button>
-        <button class="btn-secondary" onclick="goBackToCatalog()">Seguir Comprando</button>
-    </div>
-
-    <!-- PASO DE PASARELA: TARJETA DE CRÉDITO -->
-    <div id="screen-checkout-card" class="screen">
-        <div class="checkout-steps">
-            <span class="step-indicator active">1. Pago</span>
-            <span class="step-indicator">2. Envío</span>
-        </div>
-        <h3>Datos de la Tarjeta</h3>
-        <div class="form-group">
-            <label>Titular de la Tarjeta</label>
-            <input type="text" id="card-name" placeholder="Nombre completo">
-            <div class="error-msg" id="err-name">Por favor, introduce el nombre del titular.</div>
-        </div>
-        <div class="form-group">
-            <label>Número de Tarjeta</label>
-            <input type="text" id="card-number" placeholder="16 dígitos numéricos" maxlength="16">
-            <div class="error-msg" id="err-number">Debe contener exactamente 16 dígitos numéricos.</div>
-        </div>
-        <div class="row">
-            <div class="form-group" style="flex:1;">
-                <label>Vencimiento</label>
-                <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5">
-                <div class="error-msg" id="err-expiry">Usa el formato MM/AA.</div>
-            </div>
-            <div class="form-group" style="flex:1;">
-                <label>CVV</label>
-                <input type="password" id="card-cvv" placeholder="3 dígitos" maxlength="3">
-                <div class="error-msg" id="err-cvv">Introduce los 3 dígitos de seguridad.</div>
-            </div>
-        </div>
-        <button class="btn-primary" onclick="validateCardForm()">Siguiente Paso (Envío)</button>
-        <button class="btn-secondary" onclick="handleCheckoutBack()">Volver</button>
-    </div>
-
-    <!-- PASO DE PASARELA: DIRECCIÓN DE ENVÍO -->
-    <div id="screen-checkout-shipping" class="screen">
-        <div class="checkout-steps">
-            <span class="step-indicator">1. Pago</span>
-            <span class="step-indicator active">2. Envío</span>
-        </div>
-        <h3>Dirección de Despacho</h3>
-        <div class="form-group">
-            <label>Dirección Física Completa</label>
-            <input type="text" id="ship-address" placeholder="Calle, Av, Nro de casa/apto">
-            <div class="error-msg" id="err-address">Introduce la dirección de entrega.</div>
-        </div>
-        <div class="row">
-            <div class="form-group" style="flex:1;">
-                <label>Ciudad</label>
-                <input type="text" id="ship-city" placeholder="Ej. Caracas">
-                <div class="error-msg" id="err-city">Campo obligatorio.</div>
-            </div>
-            <div class="form-group" style="flex:1;">
-                <label>Estado / Provincia</label>
-                <input type="text" id="ship-state" placeholder="Ej. Miranda">
-                <div class="error-msg" id="err-state">Campo obligatorio.</div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group" style="flex:1;">
-                <label>País</label>
-                <input type="text" id="ship-country" placeholder="Ej. Venezuela">
-                <div class="error-msg" id="err-country">Campo obligatorio.</div>
-            </div>
-            <div class="form-group" style="flex:1;">
-                <label>Código Postal</label>
-                <input type="text" id="ship-zip" placeholder="Ej. 1010">
-                <div class="error-msg" id="err-zip">Código no válido.</div>
-            </div>
-        </div>
-        <button class="btn-primary" onclick="validateShippingForm()">Procesar Pedido Seguro</button>
-        <button class="btn-secondary" onclick="goToScreen('screen-checkout-card')">Volver al Pago</button>
-    </div>
-
-    <!-- PANTALLA: CARGANDO / ÉXITO FINAL -->
-    <div id="screen-processing" class="screen" style="text-align: center;">
-        <div id="loader-box">
-            <h3 id="processing-title">Validando Transacción Segura...</h3>
-            <div class="loader"></div>
-        </div>
-        <div id="success-box" style="display: none;">
-            <div style="font-size: 3.5rem; color: var(--primary); margin-bottom: 10px;">✓</div>
-            <h3>¡Orden Procesada con Éxito!</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Tu pedido ha sido aprobado por el sistema central de Play Crack Studios.</p>
-            
-            <div class="receipt-box" id="receipt-content">
-                <!-- Inyección dinámica del recibo -->
+    <!-- MODAL DE CHECKOUT (3 PASOS) -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-card" id="checkout-card">
+            <button class="close-modal" onclick="closeCheckout()">X</button>
+            <div class="step-indicator">
+                <span class="step-dot active" id="dot-1">1. Personalizar</span>
+                <span class="step-dot" id="dot-2">2. Tarjeta</span>
+                <span class="step-dot" id="dot-3">3. Envío</span>
             </div>
 
-            <button class="btn-primary" onclick="resetStoreToCatalog()">Regresar a la Tienda</button>
-        </div>
-    </div>
+            <!-- Paso 1 -->
+            <div class="checkout-step active" id="step-1-content">
+                <h3 id="chk-title">Configura tu Consola</h3>
+                <div class="form-group" id="group-model-select" style="display:none;">
+                    <label id="lbl-version">Versión Hardware</label>
+                    <select id="chk-version-select" onchange="updateCheckoutSpecs()">
+                        <!-- Dinámico -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-color">Color Oficial de Carcasa</label>
+                    <select id="chk-color" onchange="applyColorEffect(this.value)">
+                        <!-- Dinámico -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-storage">Capacidad Almacenamiento</label>
+                    <select id="chk-storage">
+                        <!-- Dinámico -->
+                    </select>
+                </div>
+                <div class="switch-row">
+                    <span id="lbl-garantia">Garantía Premium de 3 años (+$50)</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="chk-warranty" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <button class="buy-btn" style="width:100%; margin-top:10px;" onclick="goStep2()">Siguiente / Next ></button>
+            </div>
 
-</div>
-
-<script>
-    // Audio Context para efectos de sonido sintéticos nativos (8-bits)
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playSoundClick() {
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.1);
-    }
-
-    function playSoundSuccess() {
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        const now = audioCtx.currentTime;
-        
-        // Acorde alegre de 8 bits (3 notas consecutivas rápidas)
-        const notes = [261.63, 329.63, 392.00, 523.25]; // C4 - E4 - G4 - C5
-        notes.forEach((freq, i) => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(freq, now + (i * 0.08));
-            gain.gain.setValueAtTime(0.1, now + (i * 0.08));
-            gain.gain.linearRampToValueAtTime(0.01, now + (i * 0.08) + 0.2);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now + (i * 0.08));
-            osc.stop(now + (i * 0.08) + 0.2);
-        });
-    }
-
-    // Estado del e-commerce
-    let cart = [];
-    let checkoutMode = 'direct'; // 'direct' o 'cart'
-    let activeProduct = null; // Para compra directa individual
-    
-    // Configuración actual de la in S series
-    let inSConfig = {
-        model: 'plus',
-        modelPrice: 700,
-        color: 'Negro Ciberpunk',
-        storage: '512GB',
-        storagePrice: 0
-    };
-
-    // Navegación limpia de pantallas
-    function goToScreen(screenId) {
-        playSoundClick();
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-        
-        // Controlar si la barra de búsqueda y carrito superior deben verse
-        const nav = document.getElementById('store-nav');
-        if (screenId === 'screen-catalog' || screenId === 'screen-cart-view') {
-            nav.style.display = 'flex';
-        } else {
-            nav.style.display = 'none';
-        }
-    }
-
-    function goBackToCatalog() {
-        goToScreen('screen-catalog');
-    }
-
-    // Filtro del catálogo por barra de búsqueda
-    function filterStore() {
-        const query = document.getElementById('search-input').value.toLowerCase().trim();
-        const cards = document.querySelectorAll('#products-list .product-card');
-        let visibleCount = 0;
-
-        cards.forEach(card => {
-            const tags = card.getAttribute('data-name');
-            if(tags.includes(query)) {
-                card.style.display = 'block';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-
-        document.getElementById('no-results').style.display = (visibleCount === 0) ? 'block' : 'none';
-    }
-
-    // Control de selectores dinámicos del Paso 1 (in S series)
-    function selectModel(modelType, price) {
-        playSoundClick();
-        inSConfig.model = modelType;
-        inSConfig.modelPrice = price;
-        document.getElementById('model-plus').classList.toggle('selected', modelType === 'plus');
-        document.getElementById('model-pro').classList.toggle('selected', modelType === 'pro');
-    }
-
-    function selectColor(colorName) {
-        playSoundClick();
-        inSConfig.color = colorName;
-        document.getElementById('color-ciber').classList.toggle('selected', colorName === 'Negro Ciberpunk');
-        document.getElementById('color-glaciar').classList.toggle('selected', colorName === 'Blanco Glaciar');
-    }
-
-    function selectStorage(size, extraPrice) {
-        playSoundClick();
-        inSConfig.storage = size;
-        inSConfig.storagePrice = extraPrice;
-        document.getElementById('storage-base').classList.toggle('selected', size === '512GB');
-        document.getElementById('storage-up').classList.toggle('selected', size === '1TB');
-    }
-
-    // Disparar flujo personalizado para in S series
-    function triggerInSConsolidation(mode) {
-        checkoutMode = mode;
-        goToScreen('screen-ins-config');
-    }
-
-    // Guardar la in S series configurada ya sea en el carrito o pasar a checkout directo
-    function confirmInSSelection() {
-        const nameString = `in S series (${inSConfig.model === 'plus' ? 's plus' : 's pro'}, ${inSConfig.color}, ${inSConfig.storage})`;
-        const finalPrice = inSConfig.modelPrice + inSConfig.storagePrice;
-
-        if (checkoutMode === 'direct') {
-            activeProduct = { name: nameString, price: finalPrice };
-            goToScreen('screen-checkout-card');
-        } else {
-            cart.push({ name: nameString, price: finalPrice });
-            updateCartBadge();
-            goToScreen('screen-catalog');
-        }
-    }
-
-    // Lógica para el resto de productos estándares de la tienda
-    function buyDirectly(prodName, prodPrice) {
-        checkoutMode = 'direct';
-        activeProduct = { name: prodName, price: prodPrice };
-        goToScreen('screen-checkout-card');
-    }
-
-    function addToCart(prodName, prodPrice) {
-        playSoundClick();
-        cart.push({ name: prodName, price: prodPrice });
-        updateCartBadge();
-    }
-
-    function updateCartBadge() {
-        document.getElementById('cart-counter-badge').innerText = cart.length;
-    }
-
-    // Ver pantalla del carrito
-    function openCartView() {
-        const container = document.getElementById('cart-items-container');
-        container.innerHTML = '';
-        
-        if (cart.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Tu carrito está vacío.</p>';
-            document.getElementById('cart-subtotal-text').innerText = '$0.00';
-        } else {
-            let subtotal = 0;
-            cart.forEach((item, index) => {
-                subtotal += item.price;
-                const row = document.createElement('div');
-                row.className = 'cart-item-row';
-                row.innerHTML = `
-                    <div class="cart-item-info">
-                        <div><strong>${item.name}</strong></div>
-                        <button class="remove-btn" onclick="removeFromCart(${index})">Eliminar</button>
+            <!-- Paso 2 -->
+            <div class="checkout-step" id="step-2-content">
+                <h3 id="chk-pago-title">Datos de la Tarjeta</h3>
+                <div class="form-group">
+                    <label>Nombre del Titular</label>
+                    <input type="text" id="card-name" placeholder="Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label>Número de Tarjeta (16 dígitos)</label>
+                    <input type="text" id="card-number" placeholder="4000 1234 5678 9010" maxlength="19">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Vencimiento</label>
+                        <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5">
                     </div>
-                    <div class="cart-item-price">$${item.price.toFixed(2)}</div>
-                `;
-                container.appendChild(row);
+                    <div class="form-group" style="flex:1;">
+                        <label>CVV</label>
+                        <input type="password" id="card-cvv" placeholder="123" maxlength="3">
+                    </div>
+                </div>
+                <button class="buy-btn" style="width:100%; margin-top:10px;" onclick="goStep3()">Siguiente / Next ></button>
+                <button class="cart-add-btn" style="width:100%; margin-top:5px;" onclick="goStep1()">< Volver</button>
+            </div>
+
+            <!-- Paso 3 -->
+            <div class="checkout-step" id="step-3-content">
+                <h3 id="chk-envio-title">Dirección de Envío</h3>
+                <div class="form-group">
+                    <label>Calle y Número / Av.</label>
+                    <input type="text" id="ship-address" placeholder="Av. Principal #123">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Ciudad</label>
+                        <input type="text" id="ship-city" placeholder="El Tigre">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Estado / Provincia</label>
+                        <input type="text" id="ship-state" placeholder="Anzoátegui">
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>País</label>
+                        <input type="text" id="ship-country" placeholder="Venezuela">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Código Postal</label>
+                        <input type="text" id="ship-zip" placeholder="6050">
+                    </div>
+                </div>
+                <button class="buy-btn" style="width:100%; margin-top:10px;" onclick="finalizeOrder()">Confirmar y Pagar</button>
+                <button class="cart-add-btn" style="width:100%; margin-top:5px;" onclick="goStep2()">< Volver</button>
+            </div>
+
+            <!-- Procesando / Éxito -->
+            <div class="checkout-step" id="step-status-content" class="text-center">
+                <div id="loader-box" class="text-center">
+                    <h3 id="txt-proc">Procesando tu Orden...</h3>
+                    <div style="width:40px; height:40px; border:4px solid #222; border-top:4px solid var(--primary); border-radius:50%; animation:moveGrid 1s linear infinite; margin:20px auto;"></div>
+                </div>
+                <div id="success-box" style="display:none;" class="text-center">
+                    <span style="font-size:3rem; color:var(--primary)">✓</span>
+                    <h3>¡Pedido Confirmado!</h3>
+                    <div id="order-invoice-summary" style="background:#1c1c24; padding:12px; border-radius:8px; font-size:0.85rem; text-align:left; margin-bottom:15px;"></div>
+                    <button class="buy-btn" style="width:100%;" onclick="closeCheckout()">Listo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE USUARIO / LOGIN / RULETA -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal-card" style="border-color: #9900ff;">
+            <button class="close-modal" onclick="closeUserModal()">X</button>
+            
+            <div id="user-logged-out">
+                <h3>Mi Cuenta Play Crack</h3>
+                <div class="form-group">
+                    <label>Usuario / Email</label>
+                    <input type="text" id="login-user" value="gamer@playcrack.com">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-pass" value="123456">
+                </div>
+                <button class="buy-btn" style="width:100%; background:#9900ff; color:white;" onclick="doLogin()">Iniciar Sesión / Registrarse</button>
+            </div>
+
+            <div id="user-logged-in" style="display:none;">
+                <h3>Panel de Control: <span id="profile-name" style="color:var(--primary)">Gamer</span></h3>
+                <p style="font-size:0.85rem; color:var(--text-muted)">Tarjeta Recordada: <span style="color:white">**** **** **** 9010</span></p>
+                
+                <div class="wheel-container">
+                    <label style="font-size:0.8rem; font-weight:bold; color:#ffaa00;">🎰 RULETA DIARIA DE REGALOS</label>
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel" id="lucky-wheel"></div>
+                    <button class="buy-btn" style="background:#ffaa00; color:#000;" id="spin-btn" onclick="spinWheel()">Girar Ruleta</button>
+                </div>
+
+                <div style="margin-top:15px;">
+                    <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px;">📦 HISTORIAL DE PEDIDOS</label>
+                    <div id="order-history-list" style="max-height:100px; overflow-y:auto; background:#1c1c24; border-radius:8px; padding:8px; font-size:0.75rem;">
+                        No tienes compras registradas aún.
+                    </div>
+                </div>
+
+                <button class="cart-add-btn" style="width:100%; margin-top:15px;" onclick="doLogout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DEL CARRITO -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-card" style="border-color: var(--primary);">
+            <button class="close-modal" onclick="closeCartModal()">X</button>
+            <h3>Tu Carrito de Compras</h3>
+            <div id="cart-items-list" style="max-height:220px; overflow-y:auto; margin-bottom:15px; display:flex; flex-direction:column; gap:10px;">
+                <!-- Dinámico -->
+            </div>
+            <div style="border-top:1px solid #22222a; padding-top:10px; font-size:0.95rem; font-weight:bold; display:flex; justify-content:space-between; margin-bottom:15px;">
+                <span>Total Estimado (Base):</span>
+                <span id="cart-total-price" style="color:var(--primary)">$0.00</span>
+            </div>
+            <button class="buy-btn" style="width:100%;" onclick="checkoutCart()">Proceder a la Compra con todo el Carrito</button>
+        </div>
+    </div>
+
+    <!-- AUDIO SINTETIZADOR NATIVO (Web Audio API) -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                if (type === 'click') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'success') {
+                    // Acorde alegre de 8 bits
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const o = window.audioCtx ? window.audioCtx.createOscillator() : audioCtx.createOscillator();
+                        const g = window.audioCtx ? window.audioCtx.createGain() : audioCtx.createGain();
+                        o.connect(g); g.connect(audioCtx.destination);
+                        o.type = 'square'; o.frequency.setValueAtTime(freq, audioCtx.currentTime + (idx * 0.08));
+                        g.gain.setValueAtTime(0.05, audioCtx.currentTime + (idx * 0.08));
+                        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                        o.start(); o.stop(audioCtx.currentTime + 0.4);
+                    });
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+                }
+            } catch(e){}
+        }
+        document.addEventListener('click', (e) => {
+            if(e.target.tagName === 'BUTTON' || e.target.classList.contains('cat-btn')) {
+                playBeep('click');
+            }
+        });
+    </script>
+
+    <!-- BASE DE DATOS Y LÓGICA DE TIENDA -->
+    <script>
+        const productsDatabase = [
+            // NUEVA GENERACIÓN
+            { id: 'in_s_series', name: 'in S series', type: 'console', cat: 'novedades', basePrice: 700, subModels: [{name:'s plus', price:700, size:'Pequeña y Compacta'}, {name:'s pro', price:800, size:'Grande y Potente'}], storages: ['512GB', '1TB', '2TB', '4TB'], colors: ['Naranja y Rojo', 'Morado y Verde', 'Azul y Amarillo', 'Arcoíris', 'Azul', 'Morado', 'Verde'], specs: ['Doble Panel con Barra LTE', 'Sticks duales premium', 'Kings OS unificado'], tag: 'new', rating: 5, reviews: '¡Brutal la doble pantalla en la versión pro! - Carlos M.' },
+            { id: 'pc3_portal_pro', name: 'Play Crack 3 Portal Pro', type: 'console', cat: 'novedades', basePrice: 850, storages: ['512GB', '1TB', '2TB', '4TB'], colors: ['Rosa y Verde', 'Rojo y Naranja', 'Morado y Rojo'], specs: ['Panel Mini-LED alta tasa refresco', '32GB LPDDR4X unificada', 'Trazado de rayos nativo'], tag: 'new', rating: 5, reviews: 'Los gráficos vuelan en esta consola de mesa. - Alex S.' },
+            { id: 'pc_z_crystal', name: 'Play Crack Zeta Crystal', type: 'console', cat: 'novedades', basePrice: 1500, storages: ['2TB', '4TB', '6TB', '8TB', '10TB'], colors: ['Azul', 'Verde', 'Morado', 'Gris'], specs: ['Chip GE a700 Modificado Aero', '64GB potencia bruta integrada', 'Chasis elíptico reforzado'], tag: 'new', rating: 5, reviews: 'Una obra maestra translúcida de colección. - David K.' },
+            { id: 'pc4_ultimate', name: 'Play Crack 4 Ultimate', type: 'console', cat: 'novedades', basePrice: 2100, storages: ['4TB', '8TB', '16TB'], colors: ['Negro Obsidiana', 'Oro Criptón'], specs: ['Rendimiento 8K Nativo Avanzado', 'Enfriamiento Criogénico pasivo', '128GB RAM Unificada'], tag: 'new', rating: 5, reviews: 'La bestia definitiva del mercado actual. - Hector V.' },
+            
+            // ACCESORIOS
+            { id: 'funda_pointer', name: 'Estuche Rígido Pointer', type: 'accessory', cat: 'novedades', basePrice: 90, storages: ['Ranura SD expandible'], colors: ['Azul', 'Verde', 'Morado', 'Gris'], specs: ['Protección militar anti-caídas', 'Espacio modular para cables', 'Color a juego con Zeta Crystal'], tag: 'new', rating: 4, reviews: 'Protección perfecta con el mismo tono de la consola. - Luis G.' },
+            { id: 'vr_vision', name: 'Play Crack VR Vision', type: 'accessory', cat: 'novedades', basePrice: 600, storages: ['Inalámbrico Standalone'], colors: ['Blanco Glaciar', 'Negro Mate'], specs: ['Pantallas Micro-OLED 4K por ojo', 'Seguimiento ocular integrado', 'Audio Espacial háptico'], tag: 'new', rating: 5, reviews: 'La inmersión en Crónicas Mafia VR es absurda. - Jose R.' },
+
+            // CLÁSICAS / REACONDICIONADAS / USADAS
+            { id: 'pc1', name: 'Play Crack 1', type: 'console', cat: 'reconditioned', basePrice: 300, storages: ['128GB', '256GB'], colors: ['Gris Retro'], specs: ['Arquitectura clásica Play Crack', 'Controlador original incluido'], tag: 'reac', rating: 4, reviews: 'Nostalgia pura en excelente estado estético. - Ana P.' },
+            { id: 'pc2', name: 'Play Crack 2', type: 'console', cat: 'used', basePrice: 450, storages: ['256GB', '512GB'], colors: ['Negro Mate'], specs: ['Lector de discos ópticos premium', 'Soporte multijugador local'], tag: 'used', rating: 4, reviews: 'Funciona genial, ideal para ports clásicos. - Juan D.' },
+            { id: 'pc_max_portable', name: 'Play Crack Max Portable', type: 'console', cat: 'reconditioned', basePrice: 500, storages: ['256GB', '512GB'], colors: ['Plata Eléctrica'], specs: ['Panel LCD de alta densidad', 'Batería extendida 6 horas'], tag: 'reac', rating: 4, reviews: 'Súper cómoda para viajes largos. - Maria L.' },
+            { id: 'pc_mini', name: 'Play Crack Mini', type: 'console', cat: 'reconditioned', basePrice: 200, storages: ['64GB'], colors: ['Rojo Carmín'], specs: ['Diseño de bolsillo ultra compacto', 'Ports retro preinstalados'], tag: 'reac', rating: 4, reviews: 'Pequeñita pero potente, me encanta. - Pedro T.' },
+            { id: 'pc_micro', name: 'Play Crack Micro', type: 'console', cat: 'used', basePrice: 150, storages: ['32GB'], colors: ['Azul Neón'], specs: ['Micro-placa conmemorativa', 'Controles micro-hápticos'], tag: 'used', rating: 4, reviews: 'Una rareza de colección que cabe en tu mano. - Diego M.' },
+
+            // JUEGOS Y PORTS
+            { id: 'game_battleflip', name: 'Battleflip', type: 'game', cat: 'games', basePrice: 60, storages: ['Físico / Digital'], colors: ['Estándar'], specs: ['Arcade de habilidad y física de botellas', 'Modo multijugador local competitivo', 'Alex Studio Oficial'], tag: 'soft', rating: 5, reviews: 'Adictivo al 100%, perfecto para retas en casa. - Kevin B.' },
+            { id: 'game_alexa27', name: 'Alexa 27', type: 'game', cat: 'games', basePrice: 70, storages: ['Digital Premium'], colors: ['Estándar'], specs: ['Aventura de ciencia ficción y puzles', 'Gráficos optimizados para serie S'], tag: 'soft', rating: 5, reviews: 'La historia y la atmósfera te atrapan. - Gaby F.' },
+            { id: 'game_freefire1', name: 'Free Fire 1 (Play Crack Port)', type: 'game', cat: 'games', basePrice: 40, storages: ['Edición Optimizada'], colors: ['Estándar'], specs: ['Port de alto rendimiento a 120 FPS', 'Texturas remasterizadas en alta definición'], tag: 'soft', rating: 4, reviews: 'El port corre súper fluido en la Portal Pro. - Samuel Q.' },
+            { id: 'game_cronicas_mafia', name: 'Crónicas Mafia', type: 'game', cat: 'games', basePrice: 80, storages: ['Edición Deluxe'], colors: ['Estándar'], specs: ['Shooter táctico y mundo abierto criminal', 'Incluye el aclamado Modo Deslive', 'Efectos climáticos avanzados'], tag: 'soft', rating: 5, reviews: '¡El Modo Deslive es una genialidad total! - Fede G.' },
+
+            // MONEDAS / SERVICIOS
+            { id: 'coins_10k', name: '10,000 Crack Coins Pack', type: 'service', cat: 'coins', basePrice: 100, storages: ['Abono Inmediato'], colors: ['Digital'], specs: ['Moneda digital para canjes en la store', 'Bono extra del 20% incluido'], tag: 'soft', rating: 5, reviews: 'Rápido el abono a mi cuenta de usuario. - Lucas H.' },
+            { id: 'plus_sub', name: 'Suscripción Play Crack Plus Anual', type: 'service', cat: 'coins', basePrice: 120, storages: ['Membresía 12 Meses'], colors: ['Pase Activo'], specs: ['Acceso gratuito a todos los ports clásicos', 'Pases de batalla incluidos para Battleflip'], tag: 'soft', rating: 5, reviews: 'Ahorras muchísimo si juegas los títulos retro. - Fran M.' }
+        ];
+
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let currentLang = 'es';
+        let isUserLoggedIn = false;
+        let cart = [];
+        let orderHistory = [];
+
+        // Variable global para capturar el ítem activo en el proceso del modal
+        let activeProductForCheckout = null; 
+        let checkoutIsFromCart = false;
+
+        // Render Principal de Productos
+        function renderStore() {
+            const container = document.getElementById('products-display');
+            container.innerHTML = '';
+
+            let filtered = productsDatabase.filter(p => {
+                if (currentCategory !== 'all' && p.cat !== currentCategory) return false;
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    const matchName = p.name.toLowerCase().includes(q);
+                    const matchSpecs = p.specs.some(s => s.toLowerCase().includes(q));
+                    return matchName || matchSpecs;
+                }
+                return true;
             });
-            document.getElementById('cart-subtotal-text').innerText = `$${subtotal.toFixed(2)}`;
-        }
-        goToScreen('screen-cart-view');
-    }
 
-    function removeFromCart(index) {
-        playSoundClick();
-        cart.splice(index, 1);
-        updateCartBadge();
-        openCartView();
-    }
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="no-results" id="txt-no-results">${currentLang === 'es' ? 'No se encontraron resultados en el catálogo de Play Crack.' : 'No results found in the Play Crack catalog.'}</div>`;
+                return;
+            }
 
-    function checkoutCart() {
-        if (cart.length === 0) return;
-        checkoutMode = 'cart';
-        goToScreen('screen-checkout-card');
-    }
+            filtered.forEach(p => {
+                // Cálculo de precios dinámicos para categorías especiales
+                let finalPrice = p.basePrice;
+                let oldPriceHtml = '';
+                if (p.cat === 'reconditioned') {
+                    finalPrice = Math.round(p.basePrice * 0.7);
+                    oldPriceHtml = `<span class="old-price">$${p.basePrice}</span>`;
+                } else if (p.cat === 'used') {
+                    finalPrice = Math.round(p.basePrice * 0.5);
+                    oldPriceHtml = `<span class="old-price">$${p.basePrice}</span>`;
+                }
 
-    function handleCheckoutBack() {
-        if (checkoutMode === 'direct') {
-            goToScreen('screen-catalog');
-        } else {
-            goToScreen('screen-cart-view');
-        }
-    }
-
-    // VALIDACIÓN ESTRICTA DEL PASO 1: FORMULARIO DE TARJETA
-    function validateCardForm() {
-        let isValid = true;
-
-        const nameInput = document.getElementById('card-name');
-        const numInput = document.getElementById('card-number');
-        const expInput = document.getElementById('card-expiry');
-        const cvvInput = document.getElementById('card-cvv');
-
-        // Nombre
-        if (nameInput.value.trim() === '') {
-            nameInput.classList.add('invalid');
-            document.getElementById('err-name').style.display = 'block';
-            isValid = false;
-        } else {
-            nameInput.classList.remove('invalid');
-            document.getElementById('err-name').style.display = 'none';
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div>
+                        <span class="tag-badge tag-${p.tag}">${p.tag}</span>
+                        <h3 style="margin-right:60px;">${p.name}</h3>
+                        <div class="price-line">${oldPriceHtml}$${finalPrice}.00</div>
+                        <ul class="specs-list">
+                            ${p.specs.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                        <div class="reviews-box">
+                            <div class="stars">${'★'.repeat(p.rating)}</div>
+                            <div style="color:var(--text-muted); font-style:italic; margin-top:2px;">${p.reviews}</div>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="buy-btn" onclick="startDirectPurchase('${p.id}')">${currentLang === 'es' ? 'Comprar ⚡' : 'Buy Now ⚡'}</button>
+                        <button class="cart-add-btn" onclick="addToCart('${p.id}')">🛒</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
-        // Tarjeta (16 dígitos regex)
-        const numVal = numInput.value.replace(/\s+/g, '');
-        if (!/^\d{16}$/.test(numVal)) {
-            numInput.classList.add('invalid');
-            document.getElementById('err-number').style.display = 'block';
-            isValid = false;
-        } else {
-            numInput.classList.remove('invalid');
-            document.getElementById('err-number').style.display = 'none';
+        function searchItems() {
+            searchQuery = document.getElementById('store-search').value;
+            renderStore();
         }
 
-        // Expiración básica MM/AA
-        if (!/^\d{2}\/\d{2}$/.test(expInput.value.trim())) {
-            expInput.classList.add('invalid');
-            document.getElementById('err-expiry').style.display = 'block';
-            isValid = false;
-        } else {
-            expInput.classList.remove('invalid');
-            document.getElementById('err-expiry').style.display = 'none';
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById(`btn-cat-${cat === 'reconditioned' ? 'reac' : cat === 'novedades' ? 'news' : cat === 'games' ? 'games' : cat === 'coins' ? 'coins' : cat}`);
+            if(activeBtn) activeBtn.classList.add('active');
+            renderStore();
         }
 
-        // CVV
-        if (!/^\d{3}$/.test(cvvInput.value.trim())) {
-            cvvInput.classList.add('invalid');
-            document.getElementById('err-cvv').style.display = 'block';
-            isValid = false;
-        } else {
-            cvvInput.classList.remove('invalid');
-            document.getElementById('err-cvv').style.display = 'none';
+        function changeTheme(theme) {
+            document.getElementById('bg-stars').style.display = theme === 'stars' ? 'block' : 'none';
+            document.getElementById('bg-neon').style.display = theme === 'neon' ? 'block' : 'none';
         }
 
-        if (isValid) {
-            goToScreen('screen-checkout-shipping');
+        // Carrito de Compras
+        function addToCart(id) {
+            const p = productsDatabase.find(x => x.id === id);
+            cart.push({ ...p, uniqueCartId: Date.now() + Math.random(), selectedColor: p.colors[0], selectedStorage: p.storages[0], hasWarranty: true });
+            updateCartUI();
         }
-    }
 
-    // VALIDACIÓN ESTRICTA DEL PASO 2: FORMULARIO DE ENVÍO
-    function validateShippingForm() {
-        let isValid = true;
-
-        const addrInput = document.getElementById('ship-address');
-        const cityInput = document.getElementById('ship-city');
-        const stateInput = document.getElementById('ship-state');
-        const countryInput = document.getElementById('ship-country');
-        const zipInput = document.getElementById('ship-zip');
-
-        if (addrInput.value.trim() === '') { addrInput.classList.add('invalid'); document.getElementById('err-address').style.display = 'block'; isValid = false; }
-        else { addrInput.classList.remove('invalid'); document.getElementById('err-address').style.display = 'none'; }
-
-        if (cityInput.value.trim() === '') { cityInput.classList.add('invalid'); document.getElementById('err-city').style.display = 'block'; isValid = false; }
-        else { cityInput.classList.remove('invalid'); document.getElementById('err-city').style.display = 'none'; }
-
-        if (stateInput.value.trim() === '') { stateInput.classList.add('invalid'); document.getElementById('err-state').style.display = 'block'; isValid = false; }
-        else { stateInput.classList.remove('invalid'); document.getElementById('err-state').style.display = 'none'; }
-
-        if (countryInput.value.trim() === '') { countryInput.classList.add('invalid'); document.getElementById('err-country').style.display = 'block'; isValid = false; }
-        else { countryInput.classList.remove('invalid'); document.getElementById('err-country').style.display = 'none'; }
-
-        if (zipInput.value.trim() === '') { zipInput.classList.add('invalid'); document.getElementById('err-zip').style.display = 'block'; isValid = false; }
-        else { zipInput.classList.remove('invalid'); document.getElementById('err-zip').style.display = 'none'; }
-
-        if (isValid) {
-            executeFinalPaymentAnimation();
+        function removeFromCart(uid) {
+            cart = cart.filter(x => x.uniqueCartId !== uid);
+            updateCartUI();
+            if(document.getElementById('cart-modal').style.display === 'flex') openCartModal();
         }
-    }
 
-    // ANIMACIÓN Y PROCESAMIENTO FINAL CON RECIBO MATEMÁTICO
-    function executeFinalPaymentAnimation() {
-        goToScreen('screen-processing');
-        document.getElementById('loader-box').style.display = 'block';
-        document.getElementById('success-box').style.display = 'none';
+        function updateCartUI() {
+            document.getElementById('cart-counter').innerText = cart.length;
+        }
 
-        setTimeout(() => {
-            // Calcular desglose real de precios
-            let subtotal = 0;
-            let itemsHTML = '';
+        function openCartModal() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = 'flex';
+            const list = document.getElementById('cart-items-list');
+            list.innerHTML = '';
+            
+            let total = 0;
+            if(cart.length === 0) {
+                list.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">${currentLang === 'es' ? 'El carrito está vacío.' : 'The cart is empty.'}</p>`;
+                document.getElementById('cart-total-price').innerText = "$0.00";
+                return;
+            }
 
-            if (checkoutMode === 'direct') {
-                subtotal = activeProduct.price;
-                itemsHTML = `<div class="receipt-line"><span>1x ${activeProduct.name}</span><span>$${activeProduct.price.toFixed(2)}</span></div>`;
+            cart.forEach(item => {
+                let price = item.basePrice;
+                if (item.cat === 'reconditioned') price = Math.round(item.basePrice * 0.7);
+                if (item.cat === 'used') price = Math.round(item.basePrice * 0.5);
+                total += price;
+
+                const row = document.createElement('div');
+                row.style = 'display:flex; justify-content:between; align-items:center; background:#1c1c24; padding:8px 12px; border-radius:8px;';
+                row.innerHTML = `
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; font-size:0.9rem;">${item.name}</div>
+                        <div style="color:var(--primary); font-size:0.85rem;">$${price}.00</div>
+                    </div>
+                    <button class="cart-add-btn" style="padding:4px 8px; color:var(--error); border-color:rgba(255,74,74,0.2);" onclick="removeFromCart(${item.uniqueCartId})">X</button>
+                `;
+                list.appendChild(row);
+            });
+            document.getElementById('cart-total-price').innerText = `$${total}.00`;
+        }
+
+        function closeCartModal() { document.getElementById('cart-modal').style.display = 'none'; }
+
+        // Módulo de Compra y Checkout (3 Pasos)
+        function startDirectPurchase(id) {
+            checkoutIsFromCart = false;
+            activeProductForCheckout = productsDatabase.find(x => x.id === id);
+            openCheckoutModal();
+        }
+
+        function checkoutCart() {
+            if(cart.length === 0) { playBeep('error'); return; }
+            checkoutIsFromCart = true;
+            closeCartModal();
+            // Tomamos el primer elemento para inicializar el configurador visual básico de pantallas
+            activeProductForCheckout = cart[0]; 
+            openCheckoutModal();
+        }
+
+        function openCheckoutModal() {
+            const p = activeProductForCheckout;
+            document.getElementById('checkout-modal').style.display = 'flex';
+            goStep1();
+
+            // Configurar paso 1 dinámicamente según especificaciones del hardware
+            const modelGroup = document.getElementById('group-model-select');
+            const versionSelect = document.getElementById('chk-version-select');
+            const colorSelect = document.getElementById('chk-color');
+            const storageSelect = document.getElementById('chk-storage');
+
+            colorSelect.innerHTML = p.colors.map(c => `<option value="${c}">${c}</option>`).join('');
+            storageSelect.innerHTML = p.storages.map(s => `<option value="${s}">${s}</option>`).join('');
+
+            if(p.id === 'in_s_series' && p.subModels) {
+                modelGroup.style.display = 'block';
+                versionSelect.innerHTML = p.subModels.map(m => `<option value="${m.name}">${m.name} ($${m.price}.00) - ${m.size}</option>`).join('');
             } else {
-                cart.forEach(item => {
-                    subtotal += item.price;
-                    itemsHTML += `<div class="receipt-line"><span>1x ${item.name}</span><span>$${item.price.toFixed(2)}</span></div>`;
+                modelGroup.style.display = 'none';
+            }
+            updateCheckoutSpecs();
+        }
+
+        function updateCheckoutSpecs() {
+            const p = activeProductForCheckout;
+            let currentThemeColor = '#00ffcc';
+            if(p.id === 'in_s_series') {
+                const v = document.getElementById('chk-version-select').value;
+                currentThemeColor = v === 's plus' ? '#ffaa00' : '#00ffcc';
+            }
+            document.getElementById('checkout-card').style.borderColor = currentThemeColor;
+            document.documentElement.style.setProperty('--current-color', currentThemeColor);
+        }
+
+        function applyColorEffect(color) {
+            const cleanColor = color.toLowerCase();
+            let hex = '#141419';
+            if(cleanColor.includes('naranja')) hex = 'rgba(255, 115, 0, 0.25)';
+            else if(cleanColor.includes('rojo')) hex = 'rgba(255, 0, 55, 0.25)';
+            else if(cleanColor.includes('morado')) hex = 'rgba(130, 0, 255, 0.25)';
+            else if(cleanColor.includes('verde')) hex = 'rgba(0, 255, 100, 0.25)';
+            else if(cleanColor.includes('azul')) hex = 'rgba(0, 150, 255, 0.25)';
+            else if(cleanColor.includes('rosa')) hex = 'rgba(255, 0, 150, 0.25)';
+            else if(cleanColor.includes('arcoíris') || cleanColor.includes('arcoiris')) hex = 'linear-gradient(45deg, rgba(255,0,0,0.2), rgba(0,0,255,0.2))';
+            document.getElementById('checkout-card').style.background = hex;
+        }
+
+        function closeCheckout() { document.getElementById('checkout-modal').style.display = 'none'; }
+
+        function goStep1() { switchStep(1); }
+        function goStep2() { switchStep(2); }
+        function goStep3() {
+            // Validar paso de tarjeta antes de avanzar
+            const name = document.getElementById('card-name');
+            const num = document.getElementById('card-number');
+            const exp = document.getElementById('card-expiry');
+            const cvv = document.getElementById('card-cvv');
+
+            let hasErrors = false;
+            [name, num, exp, cvv].forEach(f => {
+                if(!f.value.trim()) { f.classList.add('error-field'); hasErrors = true; }
+                else { f.classList.remove('error-field'); }
+            });
+
+            if(num.value.replace(/\s/g, '').length < 16) { num.classList.add('error-field'); hasErrors = true; }
+
+            if(hasErrors) { playBeep('error'); return; }
+            switchStep(3);
+        }
+
+        function switchStep(stepNum) {
+            document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active'));
+            document.getElementById(`step-${stepNum}-content`).classList.add('active');
+            document.getElementById(`dot-${stepNum}`).classList.add('active');
+        }
+
+        function finalizeOrder() {
+            const addr = document.getElementById('ship-address');
+            const city = document.getElementById('ship-city');
+            const state = document.getElementById('ship-state');
+            const country = document.getElementById('ship-country');
+            const zip = document.getElementById('ship-zip');
+
+            let hasErrors = false;
+            [addr, city, state, country, zip].forEach(f => {
+                if(!f.value.trim()) { f.classList.add('error-field'); hasErrors = true; }
+                else { f.classList.remove('error-field'); }
+            });
+
+            if(hasErrors) { playBeep('error'); return; }
+
+            // Cambiar a pantalla de procesando
+            document.querySelectorAll('.checkout-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-status-content').classList.add('active');
+            document.getElementById('loader-box').style.display = 'block';
+            document.getElementById('success-box').style.display = 'none';
+
+            // Cálculo final de factura
+            let subtotal = 0;
+            let productSummaryText = '';
+
+            if(checkoutIsFromCart) {
+                cart.forEach(c => {
+                    let p = c.basePrice;
+                    if (c.cat === 'reconditioned') p = Math.round(c.basePrice * 0.7);
+                    if (c.cat === 'used') p = Math.round(c.basePrice * 0.5);
+                    subtotal += p;
                 });
-            }
-
-            const iva = subtotal * 0.16;
-            const total = subtotal + iva;
-
-            const city = document.getElementById('ship-city').value;
-            const country = document.getElementById('ship-country').value;
-
-            // Inyectar contenido estructurado del recibo
-            const receiptContainer = document.getElementById('receipt-content');
-            receiptContainer.innerHTML = `
-                <div style="font-weight: bold; border-bottom: 1px dashed #2d2d38; padding-bottom: 5px; margin-bottom: 8px; text-align:center; color:var(--primary);">
-                    PLAY CRACK STUDIOS - RECIBO DE COMPRA
-                </div>
-                ${itemsHTML}
-                <div class="receipt-line" style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top:4px;">
-                    <span>Subtotal:</span><span>$${subtotal.toFixed(2)}</span>
-                </div>
-                <div class="receipt-line">
-                    <span>IVA + Envío (16%):</span><span>$${iva.toFixed(2)}</span>
-                </div>
-                <div class="receipt-line receipt-total">
-                    <span>Total Neto:</span><span>$${total.toFixed(2)}</span>
-                </div>
-                <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); border-top: 1px dashed #2d2d38; padding-top: 6px;">
-                    <strong>Destino:</strong> ${city}, ${country}.<br>
-                    <strong>Garantía:</strong> 3 Años Activa de Cobertura de Fábrica.
-                </div>
-            `;
-
-            // Cambiar vista de carga a Éxito total y sonar acorde 8-bits
-            document.getElementById('loader-box').style.display = 'none';
-            document.getElementById('success-box').style.display = 'block';
-            playSoundSuccess();
-
-            // Limpiar el carrito si la compra fue global
-            if (checkoutMode === 'cart') {
+                productSummaryText = `${cart.length} Artículos del Carrito / Items from Cart`;
                 cart = [];
-                updateCartBadge();
+                updateCartUI();
+            } else {
+                let p = activeProductForCheckout.basePrice;
+                if(activeProductForCheckout.id === 'in_s_series') {
+                    const v = document.getElementById('chk-version-select').value;
+                    p = v === 's plus' ? 700 : 800;
+                }
+                if (activeProductForCheckout.cat === 'reconditioned') p = Math.round(p * 0.7);
+                if (activeProductForCheckout.cat === 'used') p = Math.round(p * 0.5);
+                subtotal = p;
+                productSummaryText = `${activeProductForCheckout.name} (${document.getElementById('chk-color').value}, ${document.getElementById('chk-storage').value})`;
             }
-        }, 2200);
-    }
 
-    function resetStoreToCatalog() {
-        // Limpiar formularios
-        document.getElementById('card-name').value = '';
-        document.getElementById('card-number').value = '';
-        document.getElementById('card-expiry').value = '';
-        document.getElementById('card-cvv').value = '';
-        document.getElementById('ship-address').value = '';
-        document.getElementById('ship-city').value = '';
-        document.getElementById('ship-state').value = '';
-        document.getElementById('ship-country').value = '';
-        document.getElementById('ship-zip').value = '';
-        
-        goToScreen('screen-catalog');
-    }
-</script>
+            if(document.getElementById('chk-warranty').checked) subtotal += 50;
+            let tax = Math.round(subtotal * 0.16);
+            let total = subtotal + tax;
 
+            setTimeout(() => {
+                document.getElementById('loader-box').style.display = 'none';
+                document.getElementById('success-box').style.display = 'block';
+                playBeep('success');
+
+                const invoiceHtml = `
+                    <strong>Hardware/Soft:</strong> ${productSummaryText}<br>
+                    <strong>Garantía 3 Años:</strong> ${document.getElementById('chk-warranty').checked ? 'Sí / Yes' : 'No'}<br>
+                    <strong>Subtotal:</strong> $${subtotal}.00<br>
+                    <strong>IVA (16%) & Envío:</strong> $${tax}.00<br>
+                    <hr style="border-color:#2d2d38;">
+                    <strong style="color:var(--primary); font-size:1rem;">Total Neto: $${total}.00</strong><br><br>
+                    <span style="font-size:0.75rem; color:var(--text-muted)">Despachado a: ${addr.value}, ${city.value}, ${country.value}</span>
+                `;
+                document.getElementById('order-invoice-summary').innerHTML = invoiceHtml;
+
+                // Guardar en el historial del perfil
+                orderHistory.push({ desc: productSummaryText, cost: total, date: new Date().toLocaleDateString() });
+                updateHistoryUI();
+            }, 2200);
+        }
+
+        // Sistema de Cuentas y Ruleta
+        function openUserModal() { document.getElementById('user-modal').style.display = 'flex'; }
+        function closeUserModal() { document.getElementById('user-modal').style.display = 'none'; }
+
+        function doLogin() {
+            isUserLoggedIn = true;
+            document.getElementById('user-logged-out').style.display = 'none';
+            document.getElementById('user-logged-in').style.display = 'block';
+            document.getElementById('profile-name').innerText = document.getElementById('login-user').value.split('@')[0];
+            
+            // Auto-relleno inteligente de tarjeta
+            document.getElementById('card-name').value = "Gamer Pro Play Crack";
+            document.getElementById('card-number').value = "4000 5678 1234 9010";
+            document.getElementById('card-expiry').value = "12/30";
+            document.getElementById('card-cvv').value = "777";
+        }
+
+        function doLogout() {
+            isUserLoggedIn = false;
+            document.getElementById('user-logged-out').style.display = 'block';
+            document.getElementById('user-logged-in').style.display = 'none';
+            // Limpiar auto-relleno
+            document.getElementById('card-name').value = "";
+            document.getElementById('card-number').value = "";
+            document.getElementById('card-expiry').value = "";
+            document.getElementById('card-cvv').value = "";
+        }
+
+        function spinWheel() {
+            const w = document.getElementById('lucky-wheel');
+            const btn = document.getElementById('spin-btn');
+            btn.disabled = true;
+            
+            const randDegrees = Math.floor(Math.random() * 360) + 1440; // Mínimo 4 vueltas
+            w.style.transform = `rotate(${randDegrees}deg)`;
+
+            setTimeout(() => {
+                btn.disabled = false;
+                alert(currentLang === 'es' ? '¡Felicidades! Has ganado un bono sorpresa de Play Crack Plus.' : 'Congratulations! You won a surprise Play Crack Plus bonus.');
+            }, 3100);
+        }
+
+        function updateHistoryUI() {
+            const container = document.getElementById('order-history-list');
+            if(orderHistory.length === 0) {
+                container.innerHTML = 'No tienes compras registradas aún.';
+                return;
+            }
+            container.innerHTML = orderHistory.map(h => `
+                <div style="border-bottom:1px solid #2d2d38; padding:4px 0;">
+                    <strong>${h.date}</strong> - ${h.desc} (<span style="color:var(--primary)">$${h.cost}.00</span>)
+                </div>
+            `).join('');
+        }
+
+        // Chat de Soporte Técnico
+        function toggleChat() {
+            const win = document.getElementById('chat-win');
+            win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const box = document.getElementById('chat-msg-box');
+            if(!input.value.trim()) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg user';
+            userMsg.innerText = input.value;
+            box.appendChild(userMsg);
+
+            const q = input.value.toLowerCase();
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            setTimeout(() => {
+                const reply = document.createElement('div');
+                reply.className = 'msg bot';
+                
+                if(q.includes('in s') || q.includes('consola')) {
+                    reply.innerText = currentLang === 'es' ? 'La in S series cuenta con doble panel integrado y la s pro tiene un chip gráfico reforzado.' : 'The in S series features an integrated dual-panel, and the s pro has a reinforced graphics chip.';
+                } else if(q.includes('mafia') || q.includes('deslive')) {
+                    reply.innerText = currentLang === 'es' ? '¡El Modo Deslive en Crónicas Mafia viene incluido sin costo en la versión física y digital deluxe!' : 'The Deslive Mode in Crónicas Mafia is included at no cost in the physical and digital deluxe versions!';
+                } else {
+                    reply.innerText = currentLang === 'es' ? 'Tu consulta fue recibida por Play Crack Studios. Estamos verificando el estatus de tu hardware.' : 'Your inquiry was received by Play Crack Studios. We are verifying the status of your hardware.';
+                }
+                box.appendChild(reply);
+                box.scrollTop = box.scrollHeight;
+                playBeep('click');
+            }, 1000);
+        }
+
+        // Sistema Multi-idioma
+        function toggleLang() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            document.getElementById('lang-indicator').innerText = currentLang.toUpperCase();
+            
+            // Traducciones rápidas de interfaz
+            if(currentLang === 'en') {
+                document.getElementById('txt-logo').innerText = "Play Crack Store Global";
+                document.getElementById('store-search').placeholder = "Search consoles, games, ports, specifications...";
+                document.getElementById('btn-cat-reac').innerText = "Reconditioned";
+                document.getElementById('btn-cat-used').innerText = "Used Consoles";
+                document.getElementById('btn-cat-news').innerText = "What's New";
+                document.getElementById('btn-cat-games').innerText = "New Games & Ports";
+                document.getElementById('btn-cat-coins').innerText = "Crack Coins & Plus";
+            } else {
+                document.getElementById('txt-logo').innerText = "Play Crack Store";
+                document.getElementById('store-search').placeholder = "Buscar consolas, juegos, ports, specs...";
+                document.getElementById('btn-cat-reac').innerText = "Reacondicionadas";
+                document.getElementById('btn-cat-used').innerText = "Usadas";
+                document.getElementById('btn-cat-news').innerText = "Novedades";
+                document.getElementById('btn-cat-games').innerText = "Nuevos Juegos & Ports";
+                document.getElementById('btn-cat-coins').innerText = "Crack Coins & Plus";
+            }
+            renderStore();
+        }
+
+        // Inicialización
+        renderStore();
+    </script>
 </body>
 </html>
